@@ -6,24 +6,20 @@ import 'package:trappist_extra/models/chain.dart';
 
 void main() {
   // Define the available chains
-  var polkadot = RelayChain("Polkadot", chainSpec("polkadot.json"),
-          logo("polkadot.svg", "Polkadot Logo"))
-      // Statemint
-      .addParachain("Statemint", chainSpec("statemint.json"),
-          logo("statemint.svg", "Statemint Logo"))
-      // BridgeHub
-      .addParachain("BridgeHub", chainSpec("bridge-hub-polkadot.json"),
-          logo("bridgehub-polkadot.svg", "BridgeHub Logo"));
+  // var polkadot = RelayChain("Polkadot", chainSpec("polkadot.json"),
+  //         logo("polkadot.svg", "Polkadot Logo"))
+  //     // Statemint
+  //     .addParachain("Statemint", chainSpec("statemint.json"),
+  //         logo("statemint.svg", "Statemint Logo"))
+  //     // BridgeHub
+  //     .addParachain("BridgeHub", chainSpec("bridge-hub-polkadot.json"),
+  //         logo("bridgehub-polkadot.svg", "BridgeHub Logo"));
 
-  var local = RelayChain(
-          "Local", chainSpec("local.json"), logo("local.svg", "Local Logo"))
-      // Statemine
-      .addParachain("Localmine", chainSpec("localmine.json"),
-          logo("statemint.svg", "Localmine Logo"));
+  var local = RelayChain("Sentinel Chain", chainSpec("localSpec.json"), logo("sentinel.svg", "Sentinel Logo"));
 
   runApp(ChangeNotifierProvider(
       // create: (context) => Chains([]),
-      create: (context) => Chains([polkadot]),
+      create: (context) => Chains([local]),
 
       child: const MyApp()));
 }
