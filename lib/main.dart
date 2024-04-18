@@ -15,12 +15,12 @@ void main() {
   //     .addParachain("BridgeHub", chainSpec("bridge-hub-polkadot.json"),
   //         logo("bridgehub-polkadot.svg", "BridgeHub Logo"));
 
-  var local = RelayChain("Sentinel Chain", chainSpec("localSpec.json"), logo("sentinel.svg", "Sentinel Logo"));
+  var local = RelayChain("Sentinel Chain", chainSpec("localSpec-validator.json"),
+      logo("sentinel.svg", "Sentinel Logo"));
 
   runApp(ChangeNotifierProvider(
       // create: (context) => Chains([]),
       create: (context) => Chains([local]),
-
       child: const MyApp()));
 }
 
@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Trappist Extra',
+      title: 'Sentinel Call',
       theme: ThemeData(
           // This is the theme of your application.
           //
@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.pink,
           fontFamily: 'Syncopate',
           dividerColor: Colors.transparent),
-      home: const HomePage(title: 'Trappist Extra'),
+      home: const HomePage(title: 'Sentinel Call'),
     );
   }
 }

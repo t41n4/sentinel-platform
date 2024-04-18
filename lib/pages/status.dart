@@ -112,4 +112,15 @@ class ChainSyncStatus extends StatelessWidget {
               .copyWith(color: Colors.black, fontFamily: 'Syncopate-Bold')),
     ];
   }
+
+  List<Widget> buildInteractor(BuildContext context, Chain chain) {
+    return <Widget>[
+      const Text('Interactor:'),
+      Text(chain.toString(),
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge!
+              .copyWith(color: Colors.black, fontFamily: 'Syncopate-Bold')),
+    ];
+  }
 }

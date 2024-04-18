@@ -59,8 +59,10 @@ class HomePage extends StatelessWidget {
                           onPressed: () async {
                             // Select the chain
                             await context.read<Chains>().select(e);
-                            // Then close the drawer
-                            Navigator.pop(context);
+                            final currentContext = context;
+                            Future.delayed(Duration.zero, () {
+                              Navigator.pop(currentContext);
+                            });
                           },
                         ),
                         initiallyExpanded: true,
@@ -80,7 +82,10 @@ class HomePage extends StatelessWidget {
                                     // Select the chain
                                     await context.read<Chains>().select(e);
                                     // Then close the drawer
-                                    Navigator.pop(context);
+                                    final currentContext = context;
+                                    Future.delayed(Duration.zero, () {
+                                      Navigator.pop(currentContext);
+                                    });
                                   },
                                 ))
                             .toList(),

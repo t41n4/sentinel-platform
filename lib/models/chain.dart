@@ -12,11 +12,10 @@ class Chains extends ChangeNotifier {
 
   Chains(this.chains) {
     // Initialise logging
-    debugPrint('[Chain] api.initLogger');
+    // debugPrint('[Chain] api.initLogger');
     api.initLogger().listen((event) {
-      debugPrint(
-          '${event.level} [${event.tag}]: ${event.msg}(rust_time=${event.timeMillis})');
-    });
+      // debugPrint('${event.level} [${event.tag}]: ${event.msg}(rust_time=${event.timeMillis})');
+      });
     // Initialise light client
     debugPrint('[Chain] api.initLightClient');
     api.initLightClient();
@@ -181,7 +180,7 @@ abstract class Chain extends ChangeNotifier {
   }
 
   stopSync() async {
-    debugPrint('[Chain] api.stopChainSync: $name');
+    // debugPrint('[Chain] api.stopChainSync: $name');
     await api.stopChainSync(chainName: name);
     _streamSubscription?.cancel();
     _streamSubscription = null;
@@ -191,6 +190,11 @@ abstract class Chain extends ChangeNotifier {
     _health = null;
     _peers = 0;
   }
+
+  // extrinsicExecution() async {
+  //   debugPrint('[Chain] api.sendExtrinsic: $name');
+  //   await 
+  // }
 
   @override
   void dispose() {
