@@ -13,11 +13,11 @@ class Chains extends ChangeNotifier {
   Chains(this.chains) {
     // Initialise logging
     // debugPrint('[Chain] api.initLogger');
-    api.initLogger().listen((event) {
-      // debugPrint('${event.level} [${event.tag}]: ${event.msg}(rust_time=${event.timeMillis})');
-      });
+    // api.initLogger().listen((event) {
+    //   // debugPrint('${event.level} [${event.tag}]: ${event.msg}(rust_time=${event.timeMillis})');
+    //   });
     // Initialise light client
-    debugPrint('[Chain] api.initLightClient');
+    // debugPrint('[Chain] api.initLightClient');
     api.initLightClient();
     // Start current chain sync automatically
     selected = chains.first;

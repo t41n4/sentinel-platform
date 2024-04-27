@@ -1,27 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:polkadart_keyring/polkadart_keyring.dart';
 import 'package:provider/provider.dart';
-import 'package:trappist_extra/pages/home.dart';
 import 'package:trappist_extra/models/chain.dart';
+import 'package:trappist_extra/pages/home.dart';
+import 'package:trappist_extra/services/services.dart';
+import 'package:trappist_extra/theme/app_theme.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
+    as libphonenumber;
 
-void main() {
-  // Define the available chains
-  // var polkadot = RelayChain("Polkadot", chainSpec("polkadot.json"),
-  //         logo("polkadot.svg", "Polkadot Logo"))
-  //     // Statemint
-  //     .addParachain("Statemint", chainSpec("statemint.json"),
-  //         logo("statemint.svg", "Statemint Logo"))
-  //     // BridgeHub
-  //     .addParachain("BridgeHub", chainSpec("bridge-hub-polkadot.json"),
-  //         logo("bridgehub-polkadot.svg", "BridgeHub Logo"));
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  var local = RelayChain("Sentinel Chain", chainSpec("localSpec-validator.json"),
+Future main() async {
+  await dotenv.load(fileName: "assets/env/local.env");
+  final service = BlockchainService(
+      dotenv.env['WS_LOCALCHAIN_URL'] ?? 'ws://localhost:9944');
+  final wallet = await service.createWallet(
+      "bottom drive obey lake curtain smoke basket hold race lonely fit walk");
+
+  var localchain = RelayChain(
+      "Sentinel Chain",
+      chainSpec("localSpec-validator.json"),
       logo("sentinel.svg", "Sentinel Logo"));
 
+  // await libphonenumber.init();
+
   runApp(ChangeNotifierProvider(
-      // create: (context) => Chains([]),
-      create: (context) => Chains([local]),
-      child: const MyApp()));
+      create: (context) => Chains([localchain]),
+      child: MyApp(service: service, wallet: wallet)));
 }
 
 String chainSpec(String fileName) {
@@ -51,27 +59,20 @@ Widget logo(String assetName, String semanticsLabel) {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final BlockchainService service;
+  final KeyPair wallet;
+  const MyApp({super.key, required this.service, required this.wallet});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sentinel Call',
-      theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          primarySwatch: Colors.pink,
-          fontFamily: 'Syncopate',
-          dividerColor: Colors.transparent),
-      home: const HomePage(title: 'Sentinel Call'),
+      theme: AppTheme.get(isLight: true, context: context),
+      darkTheme: AppTheme.get(isLight: false, context: context),
+      home: HomePage(title: 'Sentinel Call', service: service, wallet: wallet),
+      builder: FToastBuilder(),
+      navigatorKey: navigatorKey,
     );
   }
 }

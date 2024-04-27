@@ -2,7 +2,7 @@ use anyhow::{anyhow, Context};
 use core::num::NonZeroU32;
 use flutter_rust_bridge::StreamSink;
 use lazy_static::lazy_static;
-use log::debug;
+// use log::debug;
 use parking_lot::RwLock;
 use smoldot_light::*;
 use std::{collections::HashMap, sync::{Mutex, Arc}};
@@ -200,16 +200,16 @@ pub fn listen_json_rpc_responses(
                 // to the response stream sink (towards the Dart side).
                 *rpc_response = JsonRpcResponse::Connected(async_std::task::spawn(async move {
                     while let Some(response) = rpc_responses.next().await {
-                        debug!(
-                            "JSON-RPC response for chain '{:?}': {}",
-                            chain_name, response
-                        );
+                        // debug!(
+                        //     "JSON-RPC response for chain '{:?}': {}",
+                        //     chain_name, response
+                        // );
                         rpc_responses_sink.add(response);
                     }
-                    debug!(
-                        "JSON-RPC response stream for chain '{:?}' has ended.",
-                        chain_name
-                    );
+                    // debug!(
+                    //     "JSON-RPC response stream for chain '{:?}' has ended.",
+                    //     chain_name
+                    // );
                 }));
             }
         }

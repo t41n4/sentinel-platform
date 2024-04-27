@@ -21,6 +21,10 @@ class ChainSyncStatus extends StatelessWidget {
   }
 
   List<Widget> buildChain(BuildContext context, Chain chain) {
+    debugPrint('ChainSyncStatus.buildChain: ${chain.runtimeType}');
+    debugPrint('ChainSyncStatus.buildChain: ${chain.name}');
+    debugPrint('ChainSyncStatus.buildChain: ${chain.currentBlock}');
+
     if (chain is Parachain) {
       return <Widget>[
         // Relay chain
@@ -33,7 +37,7 @@ class ChainSyncStatus extends StatelessWidget {
         const SizedBox(height: 10),
         if (chain.relayChain.currentBlock != null) ...[
           const Text(
-            'Best block:',
+            'Finalized Block:',
           ),
           Text(
             _numberFormat.format(chain.relayChain.currentBlock ?? 0),
@@ -58,7 +62,7 @@ class ChainSyncStatus extends StatelessWidget {
         const SizedBox(height: 10),
         if (chain.currentBlock != null) ...[
           const Text(
-            'Best block:',
+            'Finalized Block:',
           ),
           Text(
             _numberFormat.format(chain.currentBlock ?? 0),
@@ -85,7 +89,7 @@ class ChainSyncStatus extends StatelessWidget {
       const SizedBox(height: 20),
       if (chain.currentBlock != null) ...[
         const Text(
-          'Best block:',
+          'Finalized Block:',
         ),
         Text(
           _numberFormat.format(chain.currentBlock ?? 0),
@@ -122,5 +126,25 @@ class ChainSyncStatus extends StatelessWidget {
               .titleLarge!
               .copyWith(color: Colors.black, fontFamily: 'Syncopate-Bold')),
     ];
+  }
+}
+
+class StatusPage extends StatelessWidget {
+  const StatusPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Theme.of(context).colorScheme.background,
+      child: Column(
+        children: [
+          const SizedBox(height: 64),
+          const Text('Status'),
+          const SizedBox(height: 64),
+          Consumer<Chains>(
+              builder: (context, chains, child) => const ChainSyncStatus()),
+        ],
+      ),
+    );
   }
 }
