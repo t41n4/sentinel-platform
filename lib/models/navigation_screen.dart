@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:polkadart_keyring/polkadart_keyring.dart';
+import 'package:trappist_extra/pages/calling.dart';
 import 'package:trappist_extra/pages/report.dart';
 import 'package:trappist_extra/pages/search.dart';
 import 'package:trappist_extra/pages/status.dart';
 import 'package:trappist_extra/pages/user.dart';
 import 'package:trappist_extra/pages/vote.dart';
-import 'package:trappist_extra/services/services.dart';
-import 'package:trappist_extra/theme/custom_colors_theme.dart';
+import 'package:trappist_extra/services/blockchain.dart';
 
 class NavigationScreen extends StatefulWidget {
   final String titleList;
@@ -77,10 +77,12 @@ class _NavigationScreenState extends State<NavigationScreen>
                 wallet: widget.wallet,
                 service: widget.service,
               ),
-            'Search' => const SearchPage().build(context),
+            'Search' => const SearchPage(),
             'Report' =>
               ReportPage(service: widget.service, wallet: widget.wallet),
             'Vote' => const VotePage(),
+            'Test' =>
+              CallingPage(wallet: widget.wallet, service: widget.service),
             String() => Container(),
           }
         ],

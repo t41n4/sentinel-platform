@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -9,7 +10,7 @@ class ToastMessage extends StatelessWidget {
 
   Widget successToast(String content) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25.0),
         color: Colors.greenAccent,
@@ -17,11 +18,11 @@ class ToastMessage extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.check),
+          const Icon(Icons.check, color: Colors.black54),
           const SizedBox(
             width: 12.0,
           ),
-          Text(content),
+          AutoSizeText(content, maxLines: 1),
         ],
       ),
     );
@@ -37,7 +38,10 @@ class ToastMessage extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.check),
+          const Icon(
+            Icons.check,
+            color: Colors.black54,
+          ),
           const SizedBox(
             width: 12.0,
           ),

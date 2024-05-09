@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polkadart_keyring/polkadart_keyring.dart';
-import 'package:trappist_extra/services/services.dart';
+import 'package:trappist_extra/services/blockchain.dart';
+import 'package:trappist_extra/utils/utils.dart';
 
 class UserPage extends StatefulWidget {
   final KeyPair wallet;
@@ -12,7 +13,7 @@ class UserPage extends StatefulWidget {
   State<UserPage> createState() => _UserPageState();
 }
 
-String unitAbbreviationConverter(String value, {int unitValue = 1000000}) {
+String unitAbbreviationConverter(String value, {int unitValue = Unit}) {
   final doubleValue = double.parse(value);
   if (doubleValue >= unitValue) {
     return '${(doubleValue / unitValue).toStringAsFixed(2)}MUnit';
@@ -23,9 +24,10 @@ String unitAbbreviationConverter(String value, {int unitValue = 1000000}) {
 class _UserPageState extends State<UserPage> {
   Future<String> _getBalance(String address) async {
     final account = await widget.service.getAccountInfo(address);
-    debugPrint("[🚩 account]: ${account.toString()}");
+
+    debugPrint("[🚩 account]: ${account.toString()} ${widget.wallet.address}");
     return unitAbbreviationConverter(account['data']['free'].toString(),
-        unitValue: 1000000000000);
+        unitValue: MUnit);
   }
 
   @override
@@ -43,7 +45,7 @@ class _UserPageState extends State<UserPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
+                  widget.service.reconnect();
                 }
                 return Card(
                     child: Column(

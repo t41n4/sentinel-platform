@@ -73,6 +73,12 @@ class Txs {
     return _i6.RuntimeCall.values.scbc(_call);
   }
 
+  /// See `Pallet::update_spam_status`.
+  _i6.RuntimeCall updateSpamStatus({required List<int> spammer}) {
+    final _call = _i7.Call.values.updateSpamStatus(spammer: spammer);
+    return _i6.RuntimeCall.values.scbc(_call);
+  }
+
   /// See `Pallet::make_call`.
   _i6.RuntimeCall makeCall({
     required List<int> caller,

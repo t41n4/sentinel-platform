@@ -27,7 +27,10 @@ enum Error {
   phoneNumberSpam('PhoneNumberSpam', 6),
 
   /// The domain is spam
-  domainSpam('DomainSpam', 7);
+  domainSpam('DomainSpam', 7),
+
+  /// The phone number is not reach threshold
+  phoneNumberNotReachThreshold('PhoneNumberNotReachThreshold', 8);
 
   const Error(
     this.variantName,
@@ -73,6 +76,8 @@ class $ErrorCodec with _i1.Codec<Error> {
         return Error.phoneNumberSpam;
       case 7:
         return Error.domainSpam;
+      case 8:
+        return Error.phoneNumberNotReachThreshold;
       default:
         throw Exception('Error: Invalid variant index: "$index"');
     }

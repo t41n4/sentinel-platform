@@ -10,7 +10,7 @@ import 'spam_record.dart' as _i2;
 class PhoneRecord {
   const PhoneRecord({
     required this.trustRating,
-    required this.domain,
+    required this.status,
     required this.uniqueId,
     required this.spamRecords,
     required this.callRecords,
@@ -23,8 +23,8 @@ class PhoneRecord {
   /// TrustRating
   final int trustRating;
 
-  /// DomainType
-  final List<int> domain;
+  /// StatusType
+  final List<int> status;
 
   /// UniqueId
   final List<int> uniqueId;
@@ -43,7 +43,7 @@ class PhoneRecord {
 
   Map<String, dynamic> toJson() => {
         'trustRating': trustRating,
-        'domain': domain,
+        'status': status,
         'uniqueId': uniqueId.toList(),
         'spamRecords': spamRecords.map((value) => value.toJson()).toList(),
         'callRecords': callRecords.map((value) => value.toJson()).toList(),
@@ -58,8 +58,8 @@ class PhoneRecord {
       other is PhoneRecord &&
           other.trustRating == trustRating &&
           _i5.listsEqual(
-            other.domain,
-            domain,
+            other.status,
+            status,
           ) &&
           _i5.listsEqual(
             other.uniqueId,
@@ -77,7 +77,7 @@ class PhoneRecord {
   @override
   int get hashCode => Object.hash(
         trustRating,
-        domain,
+        status,
         uniqueId,
         spamRecords,
         callRecords,
@@ -97,7 +97,7 @@ class $PhoneRecordCodec with _i1.Codec<PhoneRecord> {
       output,
     );
     _i1.U8SequenceCodec.codec.encodeTo(
-      obj.domain,
+      obj.status,
       output,
     );
     const _i1.U8ArrayCodec(16).encodeTo(
@@ -118,7 +118,7 @@ class $PhoneRecordCodec with _i1.Codec<PhoneRecord> {
   PhoneRecord decode(_i1.Input input) {
     return PhoneRecord(
       trustRating: _i1.I8Codec.codec.decode(input),
-      domain: _i1.U8SequenceCodec.codec.decode(input),
+      status: _i1.U8SequenceCodec.codec.decode(input),
       uniqueId: const _i1.U8ArrayCodec(16).decode(input),
       spamRecords: const _i1.SequenceCodec<_i2.SpamRecord>(_i2.SpamRecord.codec)
           .decode(input),
@@ -131,7 +131,7 @@ class $PhoneRecordCodec with _i1.Codec<PhoneRecord> {
   int sizeHint(PhoneRecord obj) {
     int size = 0;
     size = size + _i1.I8Codec.codec.sizeHint(obj.trustRating);
-    size = size + _i1.U8SequenceCodec.codec.sizeHint(obj.domain);
+    size = size + _i1.U8SequenceCodec.codec.sizeHint(obj.status);
     size = size + const _i1.U8ArrayCodec(16).sizeHint(obj.uniqueId);
     size = size +
         const _i1.SequenceCodec<_i2.SpamRecord>(_i2.SpamRecord.codec)

@@ -26,7 +26,10 @@ class AppTheme {
           shadowNavigationBarColor: isLight ? primaryLightColor : colorOrange,
         )
       ],
-      textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+      primaryTextTheme: isLight
+          ? GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
+          : GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
+              .apply(bodyColor: Colors.white),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: isLight ? primaryLightColor : colorOrange,
       ),

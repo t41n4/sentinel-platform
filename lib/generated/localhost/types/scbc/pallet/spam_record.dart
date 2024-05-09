@@ -9,6 +9,7 @@ class SpamRecord {
     required this.timestamp,
     required this.reason,
     required this.uniqueId,
+    required this.who,
   });
 
   factory SpamRecord.decode(_i1.Input input) {
@@ -24,6 +25,9 @@ class SpamRecord {
   /// UniqueId
   final List<int> uniqueId;
 
+  /// PhoneNumber
+  final List<int> who;
+
   static const $SpamRecordCodec codec = $SpamRecordCodec();
 
   _i2.Uint8List encode() {
@@ -34,6 +38,7 @@ class SpamRecord {
         'timestamp': timestamp,
         'reason': reason,
         'uniqueId': uniqueId.toList(),
+        'who': who,
       };
 
   @override
@@ -54,6 +59,10 @@ class SpamRecord {
           _i3.listsEqual(
             other.uniqueId,
             uniqueId,
+          ) &&
+          _i3.listsEqual(
+            other.who,
+            who,
           );
 
   @override
@@ -61,6 +70,7 @@ class SpamRecord {
         timestamp,
         reason,
         uniqueId,
+        who,
       );
 }
 
@@ -84,6 +94,10 @@ class $SpamRecordCodec with _i1.Codec<SpamRecord> {
       obj.uniqueId,
       output,
     );
+    _i1.U8SequenceCodec.codec.encodeTo(
+      obj.who,
+      output,
+    );
   }
 
   @override
@@ -92,6 +106,7 @@ class $SpamRecordCodec with _i1.Codec<SpamRecord> {
       timestamp: _i1.U8SequenceCodec.codec.decode(input),
       reason: _i1.U8SequenceCodec.codec.decode(input),
       uniqueId: const _i1.U8ArrayCodec(16).decode(input),
+      who: _i1.U8SequenceCodec.codec.decode(input),
     );
   }
 
@@ -101,6 +116,7 @@ class $SpamRecordCodec with _i1.Codec<SpamRecord> {
     size = size + _i1.U8SequenceCodec.codec.sizeHint(obj.timestamp);
     size = size + _i1.U8SequenceCodec.codec.sizeHint(obj.reason);
     size = size + const _i1.U8ArrayCodec(16).sizeHint(obj.uniqueId);
+    size = size + _i1.U8SequenceCodec.codec.sizeHint(obj.who);
     return size;
   }
 }

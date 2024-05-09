@@ -15,8 +15,9 @@ class Chains extends ChangeNotifier {
     // debugPrint('[Chain] api.initLogger');
     // api.initLogger().listen((event) {
     //   // debugPrint('${event.level} [${event.tag}]: ${event.msg}(rust_time=${event.timeMillis})');
-    //   });
-    // Initialise light client
+    //   // debugPrint('[${event.tag}]: ${event.msg}');
+    // });
+    // // Initialise light client
     // debugPrint('[Chain] api.initLightClient');
     api.initLightClient();
     // Start current chain sync automatically
@@ -193,7 +194,7 @@ abstract class Chain extends ChangeNotifier {
 
   // extrinsicExecution() async {
   //   debugPrint('[Chain] api.sendExtrinsic: $name');
-  //   await 
+  //   await
   // }
 
   @override

@@ -48,6 +48,10 @@ class $Call {
     );
   }
 
+  UpdateSpamStatus updateSpamStatus({required List<int> spammer}) {
+    return UpdateSpamStatus(spammer: spammer);
+  }
+
   MakeCall makeCall({
     required List<int> caller,
     required List<int> callee,
@@ -70,6 +74,8 @@ class $CallCodec with _i1.Codec<Call> {
         return RegisterPhoneNumber._decode(input);
       case 1:
         return ReportSpam._decode(input);
+      case 2:
+        return UpdateSpamStatus._decode(input);
       case 3:
         return MakeCall._decode(input);
       default:
@@ -89,6 +95,9 @@ class $CallCodec with _i1.Codec<Call> {
       case ReportSpam:
         (value as ReportSpam).encodeTo(output);
         break;
+      case UpdateSpamStatus:
+        (value as UpdateSpamStatus).encodeTo(output);
+        break;
       case MakeCall:
         (value as MakeCall).encodeTo(output);
         break;
@@ -105,6 +114,8 @@ class $CallCodec with _i1.Codec<Call> {
         return (value as RegisterPhoneNumber)._sizeHint();
       case ReportSpam:
         return (value as ReportSpam)._sizeHint();
+      case UpdateSpamStatus:
+        return (value as UpdateSpamStatus)._sizeHint();
       case MakeCall:
         return (value as MakeCall)._sizeHint();
       default:
@@ -251,6 +262,55 @@ class ReportSpam extends Call {
         spammer,
         reason,
       );
+}
+
+/// See `Pallet::update_spam_status`.
+class UpdateSpamStatus extends Call {
+  const UpdateSpamStatus({required this.spammer});
+
+  factory UpdateSpamStatus._decode(_i1.Input input) {
+    return UpdateSpamStatus(spammer: _i1.U8SequenceCodec.codec.decode(input));
+  }
+
+  /// PhoneNumber
+  final List<int> spammer;
+
+  @override
+  Map<String, Map<String, List<int>>> toJson() => {
+        'update_spam_status': {'spammer': spammer}
+      };
+
+  int _sizeHint() {
+    int size = 1;
+    size = size + _i1.U8SequenceCodec.codec.sizeHint(spammer);
+    return size;
+  }
+
+  void encodeTo(_i1.Output output) {
+    _i1.U8Codec.codec.encodeTo(
+      2,
+      output,
+    );
+    _i1.U8SequenceCodec.codec.encodeTo(
+      spammer,
+      output,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(
+        this,
+        other,
+      ) ||
+      other is UpdateSpamStatus &&
+          _i3.listsEqual(
+            other.spammer,
+            spammer,
+          );
+
+  @override
+  int get hashCode => spammer.hashCode;
 }
 
 /// See `Pallet::make_call`.

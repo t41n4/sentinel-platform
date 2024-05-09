@@ -61,6 +61,10 @@ class $Event {
       callee: callee,
     );
   }
+
+  MarkSpam markSpam({required List<int> phoneNumber}) {
+    return MarkSpam(phoneNumber: phoneNumber);
+  }
 }
 
 class $EventCodec with _i1.Codec<Event> {
@@ -78,6 +82,8 @@ class $EventCodec with _i1.Codec<Event> {
         return ReportSPAM._decode(input);
       case 3:
         return MakeCall._decode(input);
+      case 4:
+        return MarkSpam._decode(input);
       default:
         throw Exception('Event: Invalid variant index: "$index"');
     }
@@ -101,6 +107,9 @@ class $EventCodec with _i1.Codec<Event> {
       case MakeCall:
         (value as MakeCall).encodeTo(output);
         break;
+      case MarkSpam:
+        (value as MarkSpam).encodeTo(output);
+        break;
       default:
         throw Exception(
             'Event: Unsupported "$value" of type "${value.runtimeType}"');
@@ -118,6 +127,8 @@ class $EventCodec with _i1.Codec<Event> {
         return (value as ReportSPAM)._sizeHint();
       case MakeCall:
         return (value as MakeCall)._sizeHint();
+      case MarkSpam:
+        return (value as MarkSpam)._sizeHint();
       default:
         throw Exception(
             'Event: Unsupported "$value" of type "${value.runtimeType}"');
@@ -181,7 +192,7 @@ class RegiterDomain extends Event {
     return RegiterDomain(domain: _i1.U8SequenceCodec.codec.decode(input));
   }
 
-  /// DomainType
+  /// StatusType
   final List<int> domain;
 
   @override
@@ -380,4 +391,52 @@ class MakeCall extends Event {
         caller,
         callee,
       );
+}
+
+class MarkSpam extends Event {
+  const MarkSpam({required this.phoneNumber});
+
+  factory MarkSpam._decode(_i1.Input input) {
+    return MarkSpam(phoneNumber: _i1.U8SequenceCodec.codec.decode(input));
+  }
+
+  /// PhoneNumber
+  final List<int> phoneNumber;
+
+  @override
+  Map<String, Map<String, List<int>>> toJson() => {
+        'MarkSpam': {'phoneNumber': phoneNumber}
+      };
+
+  int _sizeHint() {
+    int size = 1;
+    size = size + _i1.U8SequenceCodec.codec.sizeHint(phoneNumber);
+    return size;
+  }
+
+  void encodeTo(_i1.Output output) {
+    _i1.U8Codec.codec.encodeTo(
+      4,
+      output,
+    );
+    _i1.U8SequenceCodec.codec.encodeTo(
+      phoneNumber,
+      output,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(
+        this,
+        other,
+      ) ||
+      other is MarkSpam &&
+          _i3.listsEqual(
+            other.phoneNumber,
+            phoneNumber,
+          );
+
+  @override
+  int get hashCode => phoneNumber.hashCode;
 }
