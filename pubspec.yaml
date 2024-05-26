@@ -65,11 +65,14 @@ dependencies:
   get: ^4.6.6
   phone_state: ^1.0.4
   permission_handler: ^11.0.1
-  flutter_overlay_apps: ^1.2.0
   call_log: ^4.0.0
   flutter_contacts: ^1.1.7+1
   substrate_bip39: ^0.4.0
   searchable_listview: ^2.12.0
+  polkadart_scale_codec: ^1.2.0
+  date_count_down: ^3.0.0
+  flutter_overlay_window: ^0.4.4
+  flutter_slidable: ^3.1.0
 
 dev_dependencies:
   flutter_test:

@@ -48,8 +48,14 @@ class $Call {
     );
   }
 
-  UpdateSpamStatus updateSpamStatus({required List<int> spammer}) {
-    return UpdateSpamStatus(spammer: spammer);
+  UpdateSpamStatus updateSpamStatus({
+    required List<int> spammer,
+    required List<int> metadata,
+  }) {
+    return UpdateSpamStatus(
+      spammer: spammer,
+      metadata: metadata,
+    );
   }
 
   MakeCall makeCall({
@@ -266,23 +272,36 @@ class ReportSpam extends Call {
 
 /// See `Pallet::update_spam_status`.
 class UpdateSpamStatus extends Call {
-  const UpdateSpamStatus({required this.spammer});
+  const UpdateSpamStatus({
+    required this.spammer,
+    required this.metadata,
+  });
 
   factory UpdateSpamStatus._decode(_i1.Input input) {
-    return UpdateSpamStatus(spammer: _i1.U8SequenceCodec.codec.decode(input));
+    return UpdateSpamStatus(
+      spammer: _i1.U8SequenceCodec.codec.decode(input),
+      metadata: _i1.U8SequenceCodec.codec.decode(input),
+    );
   }
 
   /// PhoneNumber
   final List<int> spammer;
 
+  /// Vec<u8>
+  final List<int> metadata;
+
   @override
   Map<String, Map<String, List<int>>> toJson() => {
-        'update_spam_status': {'spammer': spammer}
+        'update_spam_status': {
+          'spammer': spammer,
+          'metadata': metadata,
+        }
       };
 
   int _sizeHint() {
     int size = 1;
     size = size + _i1.U8SequenceCodec.codec.sizeHint(spammer);
+    size = size + _i1.U8SequenceCodec.codec.sizeHint(metadata);
     return size;
   }
 
@@ -293,6 +312,10 @@ class UpdateSpamStatus extends Call {
     );
     _i1.U8SequenceCodec.codec.encodeTo(
       spammer,
+      output,
+    );
+    _i1.U8SequenceCodec.codec.encodeTo(
+      metadata,
       output,
     );
   }
@@ -307,10 +330,17 @@ class UpdateSpamStatus extends Call {
           _i3.listsEqual(
             other.spammer,
             spammer,
+          ) &&
+          _i3.listsEqual(
+            other.metadata,
+            metadata,
           );
 
   @override
-  int get hashCode => spammer.hashCode;
+  int get hashCode => Object.hash(
+        spammer,
+        metadata,
+      );
 }
 
 /// See `Pallet::make_call`.

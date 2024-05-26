@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:polkadart/scale_codec.dart';
 import 'package:polkadart_keyring/polkadart_keyring.dart';
 import 'package:ss58/ss58.dart' as ss58;
 import 'package:trappist_extra/generated/localhost/types/scbc/pallet/phone_record.dart';
 import 'package:trappist_extra/services/blockchain.dart';
+import 'package:trappist_extra/types/human_phone_record.dart';
 import 'package:trappist_extra/utils/validator.dart';
 
 import 'package:convert/convert.dart'; // Added missing import
@@ -61,11 +63,14 @@ class _SearchPageState extends State<SearchPage> {
                         );
                       }
                       if (snapshot.hasError) {
+                        // log error
+                        debugPrint(
+                            "🚩 ~ file: search.dart:71 ~ _SearchPageState ~ ${snapshot.error}:");
                         return const Center(
                           child: Text('Error while fetching data'),
                         );
                       }
-                      return snapshot.data == null
+                      return snapshot.data == null || snapshot.data!.isEmpty
                           ? const EmptyView()
                           : ListView.builder(
                               itemCount: snapshot.data!.length,
@@ -85,7 +90,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<List<HumanPhoneRecord>?> fetchPhoneRecord(String number) async {
-    debugPrint("🚩 ~ file: search.dart:48 ~ _SearchPageState ~ $number:");
     final records = await service.queryPhoneRecord(number);
     final human =
         records?.map((e) => HumanPhoneRecord.toHuman(e, number)).toList();
@@ -149,7 +153,10 @@ class PhoneRecordItem extends StatelessWidget {
                   'Status: ${phoneRecord.status}',
                 ),
                 Text(
-                  'Detect called to you: ${howManyTimesCalled(wallet.address)} times',
+                  'Detect called to you: ${howManyTimesCalled(wallet.address, phoneRecord)} times',
+                ),
+                Text(
+                  'Detect spam record: ${phoneRecord.spamRecords.length}',
                 ),
               ],
             ),
@@ -159,90 +166,12 @@ class PhoneRecordItem extends StatelessWidget {
     );
   }
 
-  String howManyTimesCalled(String address) {
+  String howManyTimesCalled(String address, HumanPhoneRecord phoneRecord) {
     final data =
         hex.encode(ss58.Codec.fromNetwork('substrate').decode(address));
-    debugPrint(
-        "🚩 ~ file: search.dart:190 ~ PhoneRecordItem ~ $data:"); // Removed unnecessary braces
-
     return phoneRecord.callRecords
         .where((element) => element['callee'] == data)
         .length
         .toString();
-  }
-}
-
-class HumanPhoneRecord {
-  final String phoneNumber;
-  final int trustRating;
-  final String status;
-  final String uniqueId;
-  final List<dynamic> spamRecords;
-  final List<dynamic> callRecords;
-
-  HumanPhoneRecord(
-      {required this.phoneNumber,
-      required this.trustRating,
-      required this.status,
-      required this.uniqueId,
-      required this.spamRecords,
-      required this.callRecords});
-
-  static HumanPhoneRecord toHuman(PhoneRecord rawFetch, String number) {
-    // super.toHuman();
-    final json = rawFetch.toJson();
-    final res = {};
-
-    for (var element in json.entries) {
-      // debugPrint("🚩 ~ BlockchainService ~ ${element.key} ~ ${element.value.runtimeType.toString()}:");
-      final type = element.value.runtimeType.toString();
-      switch (type) {
-        case 'int':
-          res[element.key] = element.value;
-          break;
-        case 'Uint8Buffer':
-          res[element.key] =
-              String.fromCharCodes(Uint8List.fromList(element.value));
-          break;
-        case 'List<int>':
-          res[element.key] = hex.encode(Uint8List.fromList(element.value));
-          break;
-        case 'List<Map<String, List<int>>>':
-          res[element.key] = element.value
-              .map((e) => e.map((key, value) {
-                    switch (key) {
-                      case 'caller':
-                        return MapEntry(key,
-                            String.fromCharCodes(Uint8List.fromList(value)));
-                      case 'callee':
-                        return MapEntry(
-                            key, hex.encode(Uint8List.fromList(value)));
-                      case 'reason':
-                        return MapEntry(
-                            key, hex.encode(Uint8List.fromList(value)));
-                      case 'uniqueId':
-                        return MapEntry(
-                            key, hex.encode(Uint8List.fromList(value)));
-                      case 'timestamp':
-                        return MapEntry(
-                            key, hex.encode(Uint8List.fromList(value)));
-                      default:
-                        return MapEntry(key, value);
-                    }
-                  }))
-              .toList();
-          break;
-        default:
-      }
-    }
-
-    return HumanPhoneRecord(
-      phoneNumber: number,
-      trustRating: res['trustRating'],
-      status: res['status'],
-      uniqueId: res['uniqueId'],
-      spamRecords: res['spamRecords'],
-      callRecords: res['callRecords'],
-    );
   }
 }

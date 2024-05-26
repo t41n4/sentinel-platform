@@ -281,6 +281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.6"
+  date_count_down:
+    dependency: "direct main"
+    description:
+      name: date_count_down
+      sha256: "89b87807a8307c03e0ee25e60175fe86667c9e8e1231032b4d4e76389fb95c80"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   deep_pick:
     dependency: "direct main"
     description:
@@ -454,14 +462,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
-  flutter_overlay_apps:
+  flutter_overlay_window:
     dependency: "direct main"
     description:
-      name: flutter_overlay_apps
-      sha256: ded9063edca4eb811c5a1e8604c5a4ece925c377438f0860fe0869a1276a9283
+      name: flutter_overlay_window
+      sha256: af871da9270bf5d67e5a657d2e286dfafa43f3417e98fa9e3c06da3f9d0f340e
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "0.4.4"
   flutter_rust_bridge:
     dependency: "direct main"
     description:
@@ -470,6 +478,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.78.0"
+  flutter_slidable:
+    dependency: "direct main"
+    description:
+      name: flutter_slidable
+      sha256: "673403d2eeef1f9e8483bd6d8d92aae73b1d8bd71f382bc3930f699c731bc27c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0"
   flutter_speed_dial:
     dependency: "direct main"
     description:
@@ -945,7 +961,7 @@ packages:
     source: hosted
     version: "0.4.3"
   polkadart_scale_codec:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: polkadart_scale_codec
       sha256: fab60c739f6ebcc812796e56378656dca57179cec46e92c23614db6fd9ed0f86

@@ -18,11 +18,15 @@ class ToastMessage extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.check, color: Colors.black54),
+          const Icon(Icons.check, color: Colors.black),
           const SizedBox(
             width: 12.0,
           ),
-          AutoSizeText(content, maxLines: 1),
+          AutoSizeText(
+            content,
+            maxLines: 1,
+            style: const TextStyle(color: Colors.black),
+          ),
         ],
       ),
     );
@@ -45,7 +49,10 @@ class ToastMessage extends StatelessWidget {
           const SizedBox(
             width: 12.0,
           ),
-          Text(content),
+          Text(
+            content,
+            style: const TextStyle(color: Colors.black),
+          ),
         ],
       ),
     );
@@ -65,7 +72,10 @@ class ToastMessage extends StatelessWidget {
           const SizedBox(
             width: 12.0,
           ),
-          Text(content),
+          Text(
+            content,
+            style: const TextStyle(color: Colors.black),
+          ),
         ],
       ),
     );
@@ -85,7 +95,10 @@ class ToastMessage extends StatelessWidget {
           const SizedBox(
             width: 12.0,
           ),
-          Text(content),
+          Text(
+            content,
+            style: const TextStyle(color: Colors.black),
+          ),
         ],
       ),
     );
@@ -105,7 +118,7 @@ class ToastMessage extends StatelessWidget {
           const SizedBox(
             width: 12.0,
           ),
-          Text(content),
+          Text(content, style: const TextStyle(color: Colors.white)),
         ],
       ),
     );
@@ -136,7 +149,7 @@ class ToastMessage extends StatelessWidget {
     fToast.showToast(
       child: toast,
       gravity: ToastGravity.BOTTOM,
-      toastDuration: const Duration(seconds: 2),
+      toastDuration: const Duration(seconds: 5),
     );
   }
 
@@ -149,5 +162,17 @@ class ToastMessage extends StatelessWidget {
     _showToast(typeToast, content, fToast);
 
     return Container();
+  }
+
+  static void show(String s) {
+    Fluttertoast.showToast(
+      msg: s,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black54,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 }

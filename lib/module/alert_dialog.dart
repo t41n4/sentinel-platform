@@ -37,15 +37,25 @@ class ShowAlertDialog extends StatelessWidget {
               // alignment: MainAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.warning),
+                title == "Error"
+                    ? const Icon(Icons.warning)
+                    : const Icon(Icons.info),
                 Text(' $title'),
               ],
             ),
-            content: Text(display is List ? display[2] : display),
+            content: Text(
+              display is List ? display[2] : display,
+              textAlign: TextAlign.center,
+            ),
             actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.pop(context, 'OK'),
-                child: const Text('OK'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'OK'),
+                    child: const Text('OK'),
+                  ),
+                ],
               ),
             ],
           );

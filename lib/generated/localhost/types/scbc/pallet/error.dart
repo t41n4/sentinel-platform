@@ -24,7 +24,7 @@ enum Error {
   domainNotSpam('DomainNotSpam', 5),
 
   /// The phone number is spam
-  phoneNumberSpam('PhoneNumberSpam', 6),
+  phoneNumberAlreadySpam('PhoneNumberAlreadySpam', 6),
 
   /// The domain is spam
   domainSpam('DomainSpam', 7),
@@ -73,7 +73,7 @@ class $ErrorCodec with _i1.Codec<Error> {
       case 5:
         return Error.domainNotSpam;
       case 6:
-        return Error.phoneNumberSpam;
+        return Error.phoneNumberAlreadySpam;
       case 7:
         return Error.domainSpam;
       case 8:

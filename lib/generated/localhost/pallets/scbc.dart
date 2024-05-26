@@ -74,8 +74,14 @@ class Txs {
   }
 
   /// See `Pallet::update_spam_status`.
-  _i6.RuntimeCall updateSpamStatus({required List<int> spammer}) {
-    final _call = _i7.Call.values.updateSpamStatus(spammer: spammer);
+  _i6.RuntimeCall updateSpamStatus({
+    required List<int> spammer,
+    required List<int> metadata,
+  }) {
+    final _call = _i7.Call.values.updateSpamStatus(
+      spammer: spammer,
+      metadata: metadata,
+    );
     return _i6.RuntimeCall.values.scbc(_call);
   }
 
@@ -97,4 +103,6 @@ class Constants {
 
   /// The overarching event type.
   final int maximumOwned = 100;
+
+  final int thresholdSpam = -50;
 }

@@ -1,12 +1,12 @@
+import 'package:call_log/call_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:polkadart/polkadart.dart';
 import 'package:polkadart_keyring/polkadart_keyring.dart';
 import 'package:trappist_extra/module/alert_dialog.dart';
 import 'package:trappist_extra/module/toast_message.dart';
 import 'package:trappist_extra/services/blockchain.dart';
-import 'package:trappist_extra/theme/custom_colors_theme.dart';
-import 'package:trappist_extra/utils/validator.dart';
 import 'package:validatorless/validatorless.dart';
 
 class ReportPage extends StatefulWidget {
@@ -23,6 +23,82 @@ class _ReportPageState extends State<ReportPage> {
   late String spammer = '';
   late String reason = '';
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final recentlyCall = widget.service.getRecentlyCall();
+
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.8,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minHeight: 100,
+        ),
+        child: FutureBuilder(
+            future: recentlyCall,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else {
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final List<CallLogEntry> callLogs =
+                      snapshot.data as List<CallLogEntry>;
+                  debugPrint(
+                      "🚩 ~ file: report.dart:132 ~ _ReportPageState ~ ${callLogs.length}:");
+                  //remove duplicate call logs
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: callLogs.length,
+                    itemBuilder: (context, index) {
+                      final date = DateTime.fromMillisecondsSinceEpoch(
+                          callLogs[index].timestamp ?? 0);
+                      final dateString =
+                          "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+                      return ListItem(
+                          name: callLogs[index].name ?? 'Unknown',
+                          number: "${callLogs[index].number}",
+                          dateTime: dateString,
+                          service: widget.service,
+                          wallet: widget.wallet);
+                    },
+                  );
+                }
+              }
+            }),
+      ),
+    );
+  }
+}
+
+class ListItem extends StatefulWidget {
+  const ListItem({
+    Key? key,
+    required this.name,
+    required this.number,
+    required this.service,
+    required this.wallet,
+    required this.dateTime,
+  }) : super(key: key);
+
+  final String name;
+  final String number;
+  final String dateTime;
+  final BlockchainService service;
+  final KeyPair wallet;
+
+  @override
+  State<ListItem> createState() => _ListItemState();
+}
+
+class _ListItemState extends State<ListItem> {
+  final colorNotifier = ValueNotifier<Color>(Colors.grey);
+
   late ExtrinsicStatus _status = const ExtrinsicStatus(type: '', value: '');
 
   _statusHandler(ExtrinsicStatus status) {
@@ -38,11 +114,15 @@ class _ReportPageState extends State<ReportPage> {
     });
 
     ToastMessage toastMessage;
-    switch (status.type) {
+    switch (_status.type) {
       case 'inBlock':
         toastMessage = ToastMessage(
-            content: 'Your transaction is ${status.type}',
-            typeToast: 'success');
+            content: 'Your transaction is ${status.type}', typeToast: 'info');
+        toastMessage.build(context);
+        break;
+      case 'signing':
+        toastMessage = ToastMessage(
+            content: 'Your transaction is ${status.type}', typeToast: 'info');
         toastMessage.build(context);
         break;
       case 'ready':
@@ -57,8 +137,7 @@ class _ReportPageState extends State<ReportPage> {
         toastMessage.build(context);
       case 'broadcast':
         toastMessage = ToastMessage(
-            content: 'Your transaction is ${status.type}',
-            typeToast: 'success');
+            content: 'Your transaction is ${status.type}', typeToast: 'info');
         toastMessage.build(context);
       case 'invalid':
         debugPrint('Invalid');
@@ -85,6 +164,82 @@ class _ReportPageState extends State<ReportPage> {
       debugPrint(widget.service.isConnected().toString());
       await widget.service.reconnect();
     }
+    // ============= check if spammer is exist =============
+    final phoneRecord = await widget.service.queryPhoneRecord(spammer);
+    final threshHold = widget.service.queryThreshold();
+    final trustRating =
+        phoneRecord!.isEmpty ? 0 : phoneRecord.first.trustRating;
+
+    final status = phoneRecord.isEmpty
+        ? 'normal'
+        : String.fromCharCodes(Uint8List.fromList(phoneRecord.first.status));
+
+    if (status.toLowerCase() == 'spam') {
+      if (context.mounted) {
+        const ShowAlertDialog(
+          title: 'Error',
+          content: 'This number is already reported as spam',
+        ).build(context);
+        setState(() {
+          isProcess = false;
+        });
+      }
+      return;
+    }
+
+    final proposal = await widget.service.getProposalList();
+    if (trustRating <= threshHold && status == 'normal') {
+      // check if proposal is exist
+      if (proposal.isNotEmpty) {
+        final proposalExist = proposal.firstWhere(
+            (element) => element.args['spammer'] == spammer,
+            orElse: () => Proposal(
+                index: 0,
+                threshold: 0,
+                section: '',
+                method: '',
+                args: {},
+                ayes: [],
+                nays: [],
+                end: 0,
+                numberBlock: 0,
+                proposal: []));
+        if (proposalExist.args['spammer'] == spammer) {
+          if (context.mounted) {
+            const ShowAlertDialog(
+              title: 'Info',
+              content:
+                  'This number is considering as spam, please visit vote page to vote on it',
+            ).build(context);
+            setState(() {
+              isProcess = false;
+            });
+          }
+          return;
+        }
+      }
+
+      final payload = await widget.service.buildProposalMotionPayload(
+          wallet: widget.wallet, spammer: spammer, metaData: reason);
+      final tx = await widget.service
+          .submitProposalMotionExtrinsic(payload, _statusHandler)
+          .catchError((error, stackTrace) {
+        if (context.mounted) {
+          ShowAlertDialog(title: 'Error', content: '$error').build(context);
+          setState(() {
+            isProcess = false;
+          });
+        } else {
+          debugPrint('Error: $error');
+        }
+        return error;
+      });
+
+      return;
+    }
+
+    // =============  =============
+
     final extrinsic = await widget.service.buildSpamExtrinsic(
         reason: reason, spammer: spammer, wallet: widget.wallet);
     await widget.service
@@ -102,85 +257,107 @@ class _ReportPageState extends State<ReportPage> {
     });
   }
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late bool isProcess = false;
 
   @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<CustomColorsTheme>()!;
-    final styleInput = TextStyle(
-      color: colors.colorLabelColor,
-    );
+  void initState() {
+    super.initState();
+  }
 
-    return Center(
-        heightFactor: 1.7,
-        child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: Card(
-                child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Form(
-                  key: _formKey,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            style: styleInput,
-                            onSaved: (newValue) {
-                              spammer = newValue!;
-                            },
-                            validator: phoneValidator,
-                            decoration: const InputDecoration(
-                              labelText: 'Spammer',
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            style: styleInput,
-                            onSaved: (newValue) {
-                              reason = newValue!;
-                            },
-                            validator: textValidator,
-                            decoration: const InputDecoration(
-                              labelText: 'Reason',
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                            ),
-                            onPressed: !isProcess
-                                ? () {
-                                    if (_formKey.currentState!.validate()) {
-                                      setState(() {
-                                        _status = const ExtrinsicStatus(
-                                            type: 'signing', value: '');
-                                        isProcess = true;
-                                      });
-                                      _formKey.currentState!.save();
-                                      _reportSpam(reason, spammer);
-                                      FocusManager.instance.primaryFocus
-                                          ?.unfocus();
-                                    }
-                                  }
-                                : null,
-                            child: Text(
-                              !isProcess ? 'Submit' : _status.type,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
-            ))));
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      child: Slidable(
+        startActionPane: ActionPane(
+          motion: const BehindMotion(),
+          children: [
+            SlidableAction(
+              onPressed: (context) {
+                colorNotifier.value = Colors.red;
+                setState(() {
+                  _status = const ExtrinsicStatus(type: 'signing', value: '');
+                  isProcess = true;
+                });
+                const toastMessage = ToastMessage(
+                    content: 'Your transaction is signing', typeToast: 'info');
+                toastMessage.build(context);
+                _reportSpam("Spam", widget.number);
+              },
+              backgroundColor: const Color(0xFFFE4A49),
+              foregroundColor: Colors.white,
+              icon: Icons.report,
+              label: 'Report',
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Hint(colorNotifier: colorNotifier),
+            Expanded(
+              child: Item(
+                name: widget.name,
+                number: widget.number,
+                dateTime: widget.dateTime,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Hint extends StatelessWidget {
+  const Hint({
+    Key? key,
+    required this.colorNotifier,
+  }) : super(key: key);
+
+  final ValueNotifier<Color> colorNotifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<Color>(
+      valueListenable: colorNotifier,
+      builder: (context, color, child) {
+        return Container(width: 8, color: color);
+      },
+    );
+  }
+}
+
+class Item extends StatelessWidget {
+  const Item({
+    Key? key,
+    required this.name,
+    required this.number,
+    required this.dateTime,
+  }) : super(key: key);
+
+  final String name;
+  final String number;
+  final String dateTime;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: GestureDetector(
+        onLongPress: () {
+          // copy to clipboard
+          Clipboard.setData(ClipboardData(text: number));
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: Text(name, style: textTheme.bodyText1)),
+            Expanded(
+                child: Text("$number - $dateTime", style: textTheme.bodyText2)),
+          ],
+        ),
+      ),
+    );
   }
 }

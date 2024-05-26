@@ -4,7 +4,8 @@ import 'package:call_log/call_log.dart';
 import 'package:convert/convert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:flutter_overlay_apps/flutter_overlay_apps.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
+import 'package:polkadart/scale_codec.dart';
 import 'package:polkadart_keyring/polkadart_keyring.dart';
 import 'package:ss58/ss58.dart' as ss58;
 import 'package:substrate_bip39/substrate_bip39.dart';
@@ -33,17 +34,25 @@ class _CallingPageState extends State<CallingPage> {
         children: [
           ElevatedButton(
               onPressed: () async {
-                Iterable<CallLogEntry> entries =
-                    await CallLog.query(number: '02471093224');
-                debugPrint("🚩 ~ entries. ~ ${entries.length}:");
+                final contacts =
+                    await FlutterContacts.getContacts(withProperties: true);
+                debugPrint(
+                    "🚩 ~ file: calling.dart:42 ~ _CallingPageState ~ $contacts:");
+                final contact = contacts
+                    .where((element) => element.phones.any((phone) =>
+                        phone.number.replaceAll(' ', '') == '0935834329'))
+                    .toList();
 
-                FlutterOverlayApps.sendDataToAndFromOverlay({
-                  'title': 'Incoming call',
-                  'number': '123123123',
-                  'called_before': entries.length
+                FlutterOverlayWindow.shareData({
+                  'title': contact.first.displayName,
+                  'number': contact.first.phones.first.number,
+                  'called_before': 0,
+                  'status': 'normal'
                 });
-                FlutterOverlayApps.showOverlay(
-                    height: 300, alignment: OverlayAlignment.center);
+                FlutterOverlayWindow.showOverlay(
+                    enableDrag: true,
+                    height: 500,
+                    alignment: OverlayAlignment.center);
               },
               child: const Text('Show Overlay')),
           ElevatedButton(
@@ -74,7 +83,7 @@ class _CallingPageState extends State<CallingPage> {
                     .subtract(const Duration(days: 30))
                     .millisecondsSinceEpoch;
                 String number = '02471093224';
-                debugPrint("🚩 ~ _CallingPageState ~ ${number}:");
+                debugPrint("🚩 ~ _CallingPageState ~ $number:");
                 // GET WHOLE CALL LOG
                 Iterable<CallLogEntry> entries =
                     await CallLog.query(number: number);
@@ -100,8 +109,6 @@ class _CallingPageState extends State<CallingPage> {
               onPressed: () async {
                 final data =
                     await widget.service.queryPhoneRecord('02471093224');
-
-
               },
               child: const Text('queryPhoneRecord')),
           ElevatedButton(
@@ -113,9 +120,30 @@ class _CallingPageState extends State<CallingPage> {
                 debugPrint("🚩 ~ _CallingPageState ~ ${keypair.address}:");
               },
               child: const Text('Generate address')),
+          ElevatedButton(
+              onPressed: () async {
+                const encodedHex = '0x13b55a5e8f010000';
+                final input = Input.fromHex(encodedHex);
+                var decoded = U64Codec.codec.decode(input);
+                debugPrint(
+                    "🚩 ~ file: calling.dart:130 ~ _CallingPageState ~ ${decoded}:");
+              },
+              child: const Text('Decode Scale Codec')),
+          ElevatedButton(
+              onPressed: () async {
+                const blockHash =
+                    '0x3e4cf3ab69c240bc5362b454b9d7cc384eae8c36725c1e79b8c784e206166807';
+                // widget.service.queryBlockByHash(blockHash);
+              },
+              child: const Text('Decode Scale Codec')),
+          ElevatedButton(
+              onPressed: () async {
+                debugPrint(
+                    "🚩 ~ file: calling.dart:140 ~ _CallingPageState ~ async:");
 
-          // Text('Call State: ${s.callState.value.status}'),
-          // Text('Call Number: ${s.callState.value.number}'),
+                await widget.service.getProposalList();
+              },
+              child: const Text('getProposalList')),
         ],
       ),
     );

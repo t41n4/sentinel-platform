@@ -62,8 +62,14 @@ class $Event {
     );
   }
 
-  MarkSpam markSpam({required List<int> phoneNumber}) {
-    return MarkSpam(phoneNumber: phoneNumber);
+  MarkSpam markSpam({
+    required List<int> phoneNumber,
+    required List<int> metadata,
+  }) {
+    return MarkSpam(
+      phoneNumber: phoneNumber,
+      metadata: metadata,
+    );
   }
 }
 
@@ -394,23 +400,36 @@ class MakeCall extends Event {
 }
 
 class MarkSpam extends Event {
-  const MarkSpam({required this.phoneNumber});
+  const MarkSpam({
+    required this.phoneNumber,
+    required this.metadata,
+  });
 
   factory MarkSpam._decode(_i1.Input input) {
-    return MarkSpam(phoneNumber: _i1.U8SequenceCodec.codec.decode(input));
+    return MarkSpam(
+      phoneNumber: _i1.U8SequenceCodec.codec.decode(input),
+      metadata: _i1.U8SequenceCodec.codec.decode(input),
+    );
   }
 
   /// PhoneNumber
   final List<int> phoneNumber;
 
+  /// Vec<u8>
+  final List<int> metadata;
+
   @override
   Map<String, Map<String, List<int>>> toJson() => {
-        'MarkSpam': {'phoneNumber': phoneNumber}
+        'MarkSpam': {
+          'phoneNumber': phoneNumber,
+          'metadata': metadata,
+        }
       };
 
   int _sizeHint() {
     int size = 1;
     size = size + _i1.U8SequenceCodec.codec.sizeHint(phoneNumber);
+    size = size + _i1.U8SequenceCodec.codec.sizeHint(metadata);
     return size;
   }
 
@@ -421,6 +440,10 @@ class MarkSpam extends Event {
     );
     _i1.U8SequenceCodec.codec.encodeTo(
       phoneNumber,
+      output,
+    );
+    _i1.U8SequenceCodec.codec.encodeTo(
+      metadata,
       output,
     );
   }
@@ -435,8 +458,15 @@ class MarkSpam extends Event {
           _i3.listsEqual(
             other.phoneNumber,
             phoneNumber,
+          ) &&
+          _i3.listsEqual(
+            other.metadata,
+            metadata,
           );
 
   @override
-  int get hashCode => phoneNumber.hashCode;
+  int get hashCode => Object.hash(
+        phoneNumber,
+        metadata,
+      );
 }

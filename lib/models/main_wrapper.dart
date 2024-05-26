@@ -56,7 +56,7 @@ class _MainWrapperState extends State<MainWrapper>
   void dispose() {
     _fabAnimationController.dispose();
     _hideBottomBarAnimationController.dispose();
-    widget.service.deconnect();
+    widget.service.disconnect();
     super.dispose();
   }
 

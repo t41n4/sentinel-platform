@@ -1,10 +1,13 @@
 import 'dart:async';
 
+import 'package:call_log/call_log.dart';
 import 'package:convert/convert.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:polkadart/polkadart.dart';
 import 'package:polkadart_keyring/polkadart_keyring.dart';
 import 'package:ss58/ss58.dart' as ss58;
+import 'package:trappist_extra/generated/localhost/types/pallet_collective/votes.dart';
 import 'package:trappist_extra/generated/localhost/types/scbc/pallet/phone_record.dart';
 import 'package:trappist_extra/utils/utils.dart';
 
@@ -48,11 +51,17 @@ class BlockchainService {
     return KeyPair.sr25519.fromMnemonic(phrase);
   }
 
+  Future<KeyPair> createBobWallet() async {
+    const phrase =
+        'bottom drive obey lake curtain smoke basket hold race lonely fit walk//Alice';
+    return KeyPair.sr25519.fromMnemonic(phrase);
+  }
+
   bool isConnected() {
     return _localProvider.isConnected();
   }
 
-  void deconnect() {
+  void disconnect() {
     _localProvider.disconnect();
   }
 
@@ -61,6 +70,33 @@ class BlockchainService {
 
     _localProvider.disconnect();
     _localProvider = Provider.fromUri(Uri.parse(_wsEndpoint));
+  }
+
+  Future<Map<String, dynamic>> getChainInfomation(stateApi) async {
+    final wallet = Get.find<KeyPair>();
+    final runtimeVersion = await stateApi.getRuntimeVersion();
+    final specVersion = runtimeVersion.specVersion;
+    final transactionVersion = runtimeVersion.transactionVersion;
+    final block = await _localProvider.send('chain_getBlock', []);
+    final blockNumber = int.parse(block.result['block']['header']['number']);
+
+    final blockHash = (await _localProvider.send('chain_getBlockHash', []))
+        .result
+        .replaceAll('0x', '');
+
+    final genesisHash = (await _localProvider.send('chain_getBlockHash', [0]))
+        .result
+        .replaceAll('0x', '');
+    final nonce1 =
+        await SystemApi(_localProvider).accountNextIndex(wallet.address);
+    return {
+      'specVersion': specVersion,
+      'transactionVersion': transactionVersion,
+      'blockNumber': blockNumber,
+      'blockHash': blockHash,
+      'genesisHash': genesisHash,
+      'nonce': nonce1
+    };
   }
 
   Future<Uint8List> buildSpamExtrinsic(
@@ -183,8 +219,8 @@ class BlockchainService {
     final encodedSignature = hex.encode(signature);
     final encodedPublicKey = hex.encode(wallet.publicKey.bytes);
 
-    debugPrint('[🚩 encodedSignature]: $encodedSignature');
-    debugPrint('[🚩 encodedPublicKey]: $encodedPublicKey');
+    debugPrint('[🚩 encodedSignature buildMakeCallPayload]: $encodedSignature');
+    debugPrint('[🚩 encodedPublicKey buildMakeCallPayload]: $encodedPublicKey');
 
     return ExtrinsicPayload(
       signer: Uint8List.fromList(wallet.publicKey.bytes),
@@ -195,6 +231,20 @@ class BlockchainService {
       nonce: nonce1,
       tip: 0,
     ).encode(localApi.registry, wallet.signatureType);
+  }
+
+  Future<Map<String, dynamic>> getFeeDetails(Uint8List extrinsic) async {
+    final fee =
+        await _localProvider.send('payment_queryInfo', [hex.encode(extrinsic)]);
+
+    // {weight: {ref_time: 100010000, proof_size: 0}, class: normal, partialFee: 224424134}
+    final feeDetails = {
+      'weight': fee.result['weight'],
+      'class': fee.result['class'],
+      'partialFee': fee.result['partialFee']
+    };
+
+    return feeDetails;
   }
 
   Future<StreamSubscription<ExtrinsicStatus>> submitMakeCallExtrinsic(
@@ -211,13 +261,133 @@ class BlockchainService {
     }
   }
 
+  // Build proposal motion extrinsic
+  Future<Uint8List> buildProposalMotionPayload(
+      {required String spammer,
+      required String metaData,
+      required KeyPair wallet}) async {
+    final localApi = Localhost(_localProvider);
+    final stateApi = StateApi(_localProvider);
+
+    final member = await localApi.query.council.members();
+
+    final threshHold = member.length;
+
+    final proposal = localApi.tx.scbc.updateSpamStatus(
+        spammer: spammer.codeUnits, metadata: metaData.codeUnits);
+
+    final lengthBound = spammer.length + metaData.length + 9;
+
+    final runtimeCall = localApi.tx.council
+        .propose(
+            threshold: BigInt.from(threshHold),
+            proposal: proposal,
+            lengthBound: BigInt.from(lengthBound))
+        .encode();
+
+    final chainInfo = await getChainInfomation(stateApi);
+
+    final payload = SigningPayload(
+      method: runtimeCall,
+      specVersion: chainInfo['specVersion'],
+      transactionVersion: chainInfo['transactionVersion'],
+      genesisHash: chainInfo['genesisHash'],
+      blockHash: chainInfo['blockHash'],
+      blockNumber: chainInfo['blockNumber'],
+      eraPeriod: 64,
+      nonce: chainInfo['nonce'],
+      tip: 0,
+    ).encode(localApi.registry);
+
+    final signature = wallet.sign(payload);
+    final encodedSignature = hex.encode(signature);
+    final encodedPublicKey = hex.encode(wallet.publicKey.bytes);
+
+    debugPrint(
+        '[🚩 encodedSignature buildProposalMotionPayload]: $encodedSignature');
+    debugPrint(
+        '[🚩 encodedPublicKey buildProposalMotionPayload]: $encodedPublicKey');
+
+    return ExtrinsicPayload(
+      signer: Uint8List.fromList(wallet.publicKey.bytes),
+      method: runtimeCall,
+      signature: signature,
+      eraPeriod: 64,
+      blockNumber: chainInfo['blockNumber'],
+      nonce: chainInfo['nonce'],
+      tip: 0,
+    ).encode(localApi.registry, wallet.signatureType);
+  }
+
+  // Submit proposal motion extrinsic
+  Future<StreamSubscription<ExtrinsicStatus>> submitProposalMotionExtrinsic(
+      Uint8List extrinsic, void Function(ExtrinsicStatus) statusHandler) {
+    final authorApi = AuthorApi(_localProvider);
+
+    final hashTx = authorApi.submitAndWatchExtrinsic(extrinsic, statusHandler);
+    return hashTx;
+  }
+
+  // Build Vote payload
+  Future<Uint8List> buildVoteExtrinsicPayload(
+      {required int index,
+      required List<int> proposal,
+      required bool approve,
+      required KeyPair wallet}) async {
+    final localApi = Localhost(_localProvider);
+    final stateApi = StateApi(_localProvider);
+
+    final chainInfo = await getChainInfomation(stateApi);
+
+    final vote = localApi.tx.council
+        .vote(proposal: proposal, index: BigInt.from(index), approve: approve);
+
+    final runtimeCall = vote.encode();
+
+    final payload = SigningPayload(
+      method: runtimeCall,
+      specVersion: chainInfo['specVersion'],
+      transactionVersion: chainInfo['transactionVersion'],
+      genesisHash: chainInfo['genesisHash'],
+      blockHash: chainInfo['blockHash'],
+      blockNumber: chainInfo['blockNumber'],
+      eraPeriod: 64,
+      nonce: chainInfo['nonce'],
+      tip: 0,
+    ).encode(localApi.registry);
+
+    final signature = wallet.sign(payload);
+
+    return ExtrinsicPayload(
+      signer: Uint8List.fromList(wallet.publicKey.bytes),
+      method: runtimeCall,
+      signature: signature,
+      eraPeriod: 64,
+      blockNumber: chainInfo['blockNumber'],
+      nonce: chainInfo['nonce'],
+      tip: 0,
+    ).encode(localApi.registry, wallet.signatureType);
+  }
+
+  // Submit vote extrinsic
+  Future<StreamSubscription<ExtrinsicStatus>> submitVoteExtrinsic(
+      Uint8List extrinsic, void Function(ExtrinsicStatus) statusHandler) {
+    final authorApi = AuthorApi(_localProvider);
+
+    final hashTx = authorApi.submitAndWatchExtrinsic(extrinsic, statusHandler);
+    return hashTx;
+  }
+
 // Map<String, dynamic>?
   Future<List<PhoneRecord>?> queryPhoneRecord(String query) async {
-    debugPrint(
-        "🚩 ~ file: blockchain.dart:216 ~ BlockchainService ~ ${query}:");
+    // check connection
+    if (!_localProvider.isConnected()) {
+      throw Exception('Not connected to the blockchain');
+    }
 
     // check if query is a phone number or an address
-    final isPhoneNumber = query.length == 11 && query.startsWith('0');
+    final isPhoneNumber =
+        (query.length == 10 || query.length == 11) && query.startsWith('0');
     final isAddress = query.length == 48 && query.startsWith('5');
     if (query.isEmpty) {
       return [];
@@ -233,10 +403,159 @@ class BlockchainService {
 
     final localApi = Localhost(_localProvider);
     final fetch = await localApi.query.scbc.ledger(data);
-    debugPrint("🚩 ~ BlockchainService ~ ${fetch!.toJson()}");
 
-    final List<PhoneRecord> list = [];
-    list.add(fetch);
-    return list;
+    final List<PhoneRecord> res = [];
+    if (fetch == null) return res;
+
+    res.add(fetch);
+    return res;
+  }
+
+  // get proposals
+  Future<List<List<int>>> _getProposals() async {
+    final localApi = Localhost(_localProvider);
+    final fetch = await localApi.query.council.proposals();
+    return fetch;
+  }
+
+  // get voting
+  Future<Votes?> _getVoting(List<int> key1) async {
+    final localApi = Localhost(_localProvider);
+    final fetch = await localApi.query.council.voting(key1);
+    return fetch;
+  }
+
+  // get proposal list
+  Future<List<Proposal>> getProposalList() async {
+    final localApi = Localhost(_localProvider);
+    final proposals = await _getProposals();
+    final numberBlock = await getNumberBlock();
+
+    final data = await Future.wait(proposals.map((e) async {
+      final proposal = await localApi.query.council.proposalOf(e);
+      final voting = await _getVoting(e);
+      // voting json
+      // {
+      //   index: 0
+      //   threshold: 2
+      //   ayes: [
+      //     5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY
+      //   ]
+      //   nays: []
+      //   end: 73,535
+      // }
+      // proposal json
+      // {SCBC: {update_spam_status: {spammer: [48, 57, 51, 53, 56, 51, 52, 51, 50, 57], metadata: [83, 111, 97, 109]}}}
+      final data1 = proposal?.toJson();
+      // debugPrint(
+      //     "🚩 ~ file: blockchain.dart:386 ~ BlockchainService ~ $data1:");
+      final data2 = voting;
+
+      final section = data1?.keys.first;
+      final method = data1?[section]?.keys.first;
+      final args = data1?[section]?[method];
+
+      // debugPrint(
+      //     "🚩 ~ file: blockchain.dart:403 ~ BlockchainService ~ end: ${data2?.end}:");
+      // debugPrint(
+      //     "🚩 ~ file: blockchain.dart:403 ~ BlockchainService ~ nays: ${data2?.nays}:");
+      // debugPrint(
+      //     "🚩 ~ file: blockchain.dart:403 ~ BlockchainService ~ ayes: ${data2?.ayes}:");
+      // debugPrint(
+      //     "🚩 ~ file: blockchain.dart:403 ~ BlockchainService ~ args: ${args}:");
+      // debugPrint(
+      //     "🚩 ~ file: blockchain.dart:403 ~ BlockchainService ~ method: ${method}:");
+      // debugPrint(
+      //     "🚩 ~ file: blockchain.dart:403 ~ BlockchainService ~ section: ${section}:");
+      // debugPrint(
+      //     "🚩 ~ file: blockchain.dart:403 ~ BlockchainService ~ threshold: ${data2?.threshold}:");
+
+      final res = Proposal(
+          index: data2!.index,
+          threshold: data2.threshold,
+          section: section,
+          method: method,
+          args: {
+            'spammer': String.fromCharCodes(args?['spammer']),
+            'metadata': String.fromCharCodes(args?['metadata'])
+          },
+          ayes: data2.ayes
+              .map((e) => ss58.Codec.fromNetwork('substrate').encode(e))
+              .toList(),
+          nays: data2.nays
+              .map((e) => ss58.Codec.fromNetwork('substrate').encode(e))
+              .toList(),
+          end: data2.end,
+          numberBlock: numberBlock,
+          proposal: e);
+
+      return res;
+    }));
+
+    return data;
+  }
+
+  int queryThreshold() {
+    final localApi = Localhost(_localProvider);
+    return localApi.constant.scbc.thresholdSpam;
+  }
+
+  Future<int> getNumberBlock() async {
+    final localApi = Localhost(_localProvider);
+    final number = await localApi.query.system.number();
+    return number;
+  }
+
+  Future<List<CallLogEntry>> getRecentlyCall() async {
+    // QUERY CALL LOG (ALL PARAMS ARE OPTIONAL)
+    var now = DateTime.now();
+    // query CallLog 30 days ago
+    int from = now.subtract(Duration(days: 60)).millisecondsSinceEpoch;
+
+    // query CallLog 30 days ago
+
+    Iterable<CallLogEntry> entries = await CallLog.query(
+      dateFrom: from,
+    );
+    // to list
+
+    return entries.toSet().toList();
+  }
+}
+
+class Proposal {
+  late int? index;
+  late int? threshold;
+  late String? section;
+  late String? method;
+  late Map<String, dynamic> args;
+  late List<String>? ayes;
+  late List<String>? nays;
+  late int? end;
+  late int? numberBlock;
+  late List<int>? proposal;
+
+  Proposal({
+    required this.index,
+    required this.threshold,
+    required this.section,
+    required this.method,
+    required this.args,
+    required this.ayes,
+    required this.nays,
+    required this.end,
+    required this.numberBlock,
+    required this.proposal,
+  });
+
+  bool isBlank() {
+    return index == null ||
+        threshold == null ||
+        section == null ||
+        method == null ||
+        args.isEmpty ||
+        ayes == null ||
+        nays == null ||
+        end == null;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -16,15 +17,10 @@ import 'package:trappist_extra/theme/app_theme.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-@pragma("vm:entry-point")
-void showOverlay() {
-  runApp(const MaterialApp(
-    home: MyOverlayContent(),
-    debugShowCheckedModeBanner: false,
-  ));
-}
+// overlay entry point
 
 Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: "assets/env/local.env");
   final service = BlockchainService(
       dotenv.env['WEBSOCKET_LOCALCHAIN_URL'] ?? 'ws://localhost:9944');
@@ -40,9 +36,13 @@ Future main() async {
 
   await Permission.phone.request();
   await Permission.sms.request();
-  await Permission.systemAlertWindow.request();
   await FlutterContacts.requestPermission();
 
+  /// check if overlay permission is granted
+  final bool status = await FlutterOverlayWindow.isPermissionGranted();
+  if (!status) {
+    await FlutterOverlayWindow.requestPermission();
+  }
   // await FlutterCallkitIncoming.requestNotificationPermission({
   //   "rationaleMessagePermission":
   //       "Notification permission is required, to show notification.",
@@ -53,6 +53,15 @@ Future main() async {
   runApp(ChangeNotifierProvider(
       create: (context) => Chains([localchain]),
       child: MyApp(service: service, wallet: wallet)));
+}
+
+@pragma("vm:entry-point")
+void overlayMain() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MaterialApp(
+    home: MyOverlayContent(),
+    debugShowCheckedModeBanner: false,
+  ));
 }
 
 String chainSpec(String fileName) {
