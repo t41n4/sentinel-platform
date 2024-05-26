@@ -2,7 +2,7 @@
 
 **Sentinel Call** is a mobile decentralized application demonstrating the integration of a light client node. This enables the app to connect, quickly sync, and interact with any Substrate-based blockchain, including the Polkadot Network, in a fully trustless and decentralized manner. The app is built from the following components:
 
-- Substrate: ….
+- Substrate: The core blockchain framework that provides the runtime environment and development primitives to build a customized blockchain backend tailored to the spam call domain. It also enables the light client integration.
 - [Flutter](https://flutter.dev/): A multi-platform app development framework.
 - [Smoldot](https://github.com/smol-dot/smoldot): A cross-platform light client node implementation written in Rust.
 - [Flutter_rust_bridge](https://github.com/fzyzcjy/flutter_rust_bridge): A library and code generator enabling seamless integration of native Rust code in a Flutter app.
