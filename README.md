@@ -53,29 +53,30 @@ Here are completions to the demos descriptions based on the information provided
 Under the hood: Incoming calls, are checked inside the user's contacts, if it belongs to their contacts → has contact with the user → the number is safe, otherwise the numbers are cloned Record and post to blockchain.
 Under development:
 - [ ]  Capture options help users decide which of their data will be recorded. The available options will be presented upon call detection with clear instructions.
+<img src='https://github.com/t41n4/sentinel-call/assets/62371366/7ca7b82e-7f05-431c-9ae7-edcd008af06f' height='600' width='300' />
+<img src='https://github.com/t41n4/sentinel-call/assets/62371366/1a115c1c-b5a8-4560-9a92-244d4468a75f' height='600' width='300' /> 
 
-Demo: [Demo 1.1](https://github.com/t41n4/sentinel-call/assets/62371366/7ca7b82e-7f05-431c-9ae7-edcd008af06f)
-Demo: [Demo 1.2](https://github.com/t41n4/sentinel-call/assets/62371366/1a115c1c-b5a8-4560-9a92-244d4468a75f)
     
 2. **Search information function of a phone number:**
     
 Under the hood: the application will query the requested information on the substrate-node and display it if it exists
 
-Demo: [Demo 2](https://github.com/t41n4/sentinel-call/assets/62371366/74d2557e-7e42-429e-b627-5e1823687181) 
+<img src='https://github.com/t41n4/sentinel-call/assets/62371366/74d2557e-7e42-429e-b627-5e1823687181' height='600' width='300' /> 
+
     
 3. **Function to report a spam phone number**  
     
 Under the hood: Users can submit a report on a number including notes. Reports are added to the blockchain node for processing.
     
 Under development: Streamline reporting process based on feedback and UX.
-    
-Demo: [Demo 3](https://github.com/t41n4/sentinel-call/assets/62371366/bc2d401c-7ae5-498a-9b9e-a1a617269e11)
 
+<img src='https://github.com/t41n4/sentinel-call/assets/62371366/bc2d401c-7ae5-498a-9b9e-a1a617269e11' height='600' width='300' /> 
+    
 4. **Function to vote for spam phone numbers**  
 
 Under the hood: Numbers exceeding report threshold enter voting to determine labelling. Votes are recorded on-chain.
 
-Demo: [Demo 4](https://github.com/t41n4/sentinel-call/assets/62371366/9419cad3-c0e8-42b0-b74a-fbe291b53031)
+[![Watch the video]](https://github.com/t41n4/sentinel-call/assets/62371366/ffca820e-fd79-48ba-a7e2-1cc005dc5faa)
 
 ## Getting Started
 
