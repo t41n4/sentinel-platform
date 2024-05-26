@@ -56,8 +56,16 @@ Under development:
 
 - [ ]  Capture options help users decide which of their data will be recorded. The available options will be presented upon call detection with clear instructions.
 
-Demo: [Demo 1.1](https://github.com/t41n4/sentinel-call/assets/62371366/a3130493-700c-4446-bd1b-f0c3207232d7)
-Demo: [Demo 1.2](https://github.com/t41n4/sentinel-call/assets/62371366/a940573b-fea1-4c03-8cd6-8a8af2edc6c1)
+
+
+
+
+
+
+
+
+Demo: [Demo 1.1](https://github.com/t41n4/sentinel-call/assets/62371366/cbff7f22-8748-4a86-806c-129066eb2181)
+Demo: [Demo 1.2](https://github.com/t41n4/sentinel-call/assets/62371366/16019605-24e0-4aea-9a5e-eb0f76060396)
     
     ---
 
@@ -65,7 +73,11 @@ Demo: [Demo 1.2](https://github.com/t41n4/sentinel-call/assets/62371366/a940573b
     
     Under the hood: the application will query the requested information on the substrate-node and display it if it exists
     
-Demo: [Demo 2](https://github.com/t41n4/sentinel-call/assets/62371366/ec0048cd-7b5c-401d-a9e5-c414fe039518) 
+
+
+
+
+Demo: [Demo 2](https://github.com/t41n4/sentinel-call/assets/62371366/30412fcd-0db7-4afd-9450-e9140830fd83) 
     
     ---
     
@@ -75,7 +87,7 @@ Demo: [Demo 2](https://github.com/t41n4/sentinel-call/assets/62371366/ec0048cd-7
     
     Under development: Streamline reporting process based on feedback and UX.
     
-    Demo: [Demo 3](https://github.com/t41n4/sentinel-call/assets/62371366/bbadb1f7-93b0-4d27-b1ef-71568882e290)
+    Demo: [Demo 3](https://github.com/t41n4/sentinel-call/assets/62371366/11e34b11-fdfc-4eae-81bc-035b0220150e)
     
     ---
     
@@ -85,8 +97,7 @@ Under the hood: Numbers exceeding report threshold enter voting to determine lab
 
 Under development: 
 
-
-Demo: [Demo 4](https://github.com/t41n4/sentinel-call/assets/62371366/074654bc-e5f3-4733-ab6e-fda32a98f59c)
+Demo: [Demo 4](https://github.com/t41n4/sentinel-call/assets/62371366/9419cad3-c0e8-42b0-b74a-fbe291b53031)
 
 ## Getting Started
 
