@@ -10,7 +10,7 @@
 
 Altogether those technologies enable an array of exciting cross-chain applications & services:
 
-![feat](https://github.com/t41n4/sentinel-call/assets/62371366/b0e9bc69-a91d-4cba-acd9-392ebc6cfee2)
+![feat](https://github.com/t41n4/sentinel-call/assets/62371366/89eb9911-d6d2-4529-8dd2-318202efb0c7)
 
 ### Why "Sentinel Call" ?
 
