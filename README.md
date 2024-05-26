@@ -10,7 +10,7 @@
 
 Altogether those technologies enable an array of exciting cross-chain applications & services:
 
-![feat](https://github.com/t41n4/sentinel-call/assets/62371366/b77386ed-7655-45b3-8bde-61f437d0fbd8)
+![feat](https://github.com/t41n4/sentinel-call/assets/62371366/b0e9bc69-a91d-4cba-acd9-392ebc6cfee2)
 
 ### Why "Sentinel Call" ?
 
@@ -25,7 +25,7 @@ By utilizing Trappist's support for experimenting with cross-chain messaging (XC
 
 ## Architecture Overview
 
-![architecture_overview](https://github.com/t41n4/sentinel-call/assets/62371366/9062f62a-aeb8-41e9-98f5-13e008338d18)
+![architecture_overview](https://github.com/t41n4/sentinel-call/assets/62371366/8cfaf69a-85ad-4800-afa2-6e0d60d08410)
 
 Our proposed architectural framework comprises three discrete yet interconnected layers:
 
