@@ -51,51 +51,29 @@ Here are completions to the demos descriptions based on the information provided
 1. **External call detection function:** 
 
 Under the hood: Incoming calls, are checked inside the user's contacts, if it belongs to their contacts → has contact with the user → the number is safe, otherwise the numbers are cloned Record and post to blockchain.
-
 Under development:
-
 - [ ]  Capture options help users decide which of their data will be recorded. The available options will be presented upon call detection with clear instructions.
 
-
-
-
-
-
-
-
-
-Demo: [Demo 1.1](https://github.com/t41n4/sentinel-call/assets/62371366/cbff7f22-8748-4a86-806c-129066eb2181)
-Demo: [Demo 1.2](https://github.com/t41n4/sentinel-call/assets/62371366/16019605-24e0-4aea-9a5e-eb0f76060396)
+Demo: [Demo 1.1](https://github.com/t41n4/sentinel-call/assets/62371366/7ca7b82e-7f05-431c-9ae7-edcd008af06f)
+Demo: [Demo 1.2](https://github.com/t41n4/sentinel-call/assets/62371366/1a115c1c-b5a8-4560-9a92-244d4468a75f)
     
-    ---
-
 2. **Search information function of a phone number:**
     
-    Under the hood: the application will query the requested information on the substrate-node and display it if it exists
-    
+Under the hood: the application will query the requested information on the substrate-node and display it if it exists
 
-
-
-
-Demo: [Demo 2](https://github.com/t41n4/sentinel-call/assets/62371366/30412fcd-0db7-4afd-9450-e9140830fd83) 
-    
-    ---
+Demo: [Demo 2](https://github.com/t41n4/sentinel-call/assets/62371366/74d2557e-7e42-429e-b627-5e1823687181) 
     
 3. **Function to report a spam phone number**  
     
-    Under the hood: Users can submit a report on a number including notes. Reports are added to the blockchain node for processing.
+Under the hood: Users can submit a report on a number including notes. Reports are added to the blockchain node for processing.
     
-    Under development: Streamline reporting process based on feedback and UX.
+Under development: Streamline reporting process based on feedback and UX.
     
-    Demo: [Demo 3](https://github.com/t41n4/sentinel-call/assets/62371366/11e34b11-fdfc-4eae-81bc-035b0220150e)
-    
-    ---
-    
+Demo: [Demo 3](https://github.com/t41n4/sentinel-call/assets/62371366/bc2d401c-7ae5-498a-9b9e-a1a617269e11)
+
 4. **Function to vote for spam phone numbers**  
 
 Under the hood: Numbers exceeding report threshold enter voting to determine labelling. Votes are recorded on-chain.
-
-Under development: 
 
 Demo: [Demo 4](https://github.com/t41n4/sentinel-call/assets/62371366/9419cad3-c0e8-42b0-b74a-fbe291b53031)
 
@@ -118,11 +96,8 @@ Depending on the device you want to deploy on either choose Linux & Android on L
 [macos-intro.md](./docs/macos-instructions.md)
 
 ## Current limitations
-
 This is an early stage sample application, with a number of known limitations:
-
 - Integration that has been tested with the Android app, Linux. No effort will be put into the Web target though, as the [Substrate Connect](https://github.com/paritytech/substrate-connect) project is already addressing this use case by embedding a WASM light client into a web-based decentralized application.
-
 - Integration that has been tested with the Android app, Linux. No effort will be put into the Web target though, as the [Substrate Connect](https://github.com/paritytech/substrate-connect) project is already addressing this use case by embedding a WASM light client into a web-based decentralized application.
 - The code of the embedded `smoldot-flutter` library is very rough, and currently contain some hard-coded parts (e.g. connection to the Polkadot network) which should be parameterized, and made more generic for reuse in other projects.
 - Optimizations of the user experience remain ongoing. The user interface implementation is not yet finalized.
