@@ -102,7 +102,6 @@ This is an early stage sample application, with a number of known limitations:
 - Integration that has been tested with the Android app, Linux. No effort will be put into the Web target though, as the [Substrate Connect](https://github.com/paritytech/substrate-connect) project is already addressing this use case by embedding a WASM light client into a web-based decentralized application.
 - The code of the embedded `smoldot-flutter` library is very rough, and currently contain some hard-coded parts (e.g. connection to the Polkadot network) which should be parameterized, and made more generic for reuse in other projects.
 - Optimizations of the user experience remain ongoing. The user interface implementation is not yet finalized.
-- Optimizations of the user experience remain ongoing. The user interface implementation is not yet finalized.
 
 ## License
 
