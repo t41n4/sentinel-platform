@@ -1,20 +1,20 @@
 # Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
+sentinel_call/*.class
+sentinel_call/*.log
+sentinel_call/*.pyc
+sentinel_call/*.swp
+sentinel_call/.DS_Store
+sentinel_call/.atom/
+sentinel_call/.buildlog/
+sentinel_call/.history
+sentinel_call/.svn/
+sentinel_call/migrate_working_dir/
 
 # IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
+sentinel_call/*.iml
+sentinel_call/*.ipr
+sentinel_call/*.iws
+sentinel_call/.idea/
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -22,23 +22,31 @@ migrate_working_dir/
 #.vscode/
 
 # Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
-/build/
+sentinel_call/**/doc/api/
+sentinel_call/**/ios/Flutter/.last_build_id
+sentinel_call/.dart_tool/
+sentinel_call/.flutter-plugins
+sentinel_call/.flutter-plugins-dependencies
+sentinel_call/.packages
+sentinel_call/.pub-cache/
+sentinel_call/.pub/
+sentinel_call//build/
 
 # Symbolication related
-app.*.symbols
+sentinel_call/app.*.symbols
 
 # Obfuscation related
-app.*.map.json
+sentinel_call/app.*.map.json
 
 # Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+sentinel_call/android/app/debug
+sentinel_call/android/app/profile
+sentinel_call/android/app/release
+
+#Rust
+sentinel_chain/target/
+sentinel_chain/debug/
+sentinel_chain/Cargo.lock
+sentinel_chain/**/*.rs.bk
+sentinel_chain/*.pdb
+
