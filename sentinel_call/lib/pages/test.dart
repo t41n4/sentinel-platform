@@ -47,7 +47,7 @@ class _CallingPageState extends State<CallingPage> {
                   'title': contact.first.displayName,
                   'number': contact.first.phones.first.number,
                   'called_before': 0,
-                  'status': 'normal'
+                  'status': 'spam'
                 });
                 FlutterOverlayWindow.showOverlay(
                     enableDrag: true,

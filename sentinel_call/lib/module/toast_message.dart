@@ -19,7 +19,6 @@ class ToastMessage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.check, color: Colors.black),
-          const Icon(Icons.check, color: Colors.black),
           const SizedBox(
             width: 12.0,
           ),

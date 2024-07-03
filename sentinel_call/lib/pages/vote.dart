@@ -33,17 +33,17 @@ DateTime minutesToUTC(int minutes) {
 }
 
 class _VotePageState extends State<VotePage> {
-  late ExtrinsicStatus _status = const ExtrinsicStatus(type: '', value: '');
+  // late ExtrinsicStatus _status = const ExtrinsicStatus(type: '', value: '');
 
-  _submitPayload(Uint8List extrinsic) {
-    debugPrint("🚩 ~ file: vote.dart:95 ~ _VotePageState ~ _submitPayload:");
+  // _submitPayload(Uint8List extrinsic) {
+  //   debugPrint("🚩 ~ file: vote.dart:95 ~ _VotePageState ~ _submitPayload:");
 
-    // widget.service.submitVoteExtrinsic(extrinsic, _statusHandler);
-  }
+  //   // widget.service.submitVoteExtrinsic(extrinsic, _statusHandler);
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
     final data = widget.service.getProposalList();
     return Container(
       color: Theme.of(context).colorScheme.background,
@@ -56,7 +56,10 @@ class _VotePageState extends State<VotePage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Center(child: Text('not connected')),
+            );
           }
           if (snapshot.data!.isEmpty) {
             return const Center(child: Text('No proposals found'));

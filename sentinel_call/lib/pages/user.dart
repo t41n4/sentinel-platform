@@ -39,8 +39,8 @@ class _UserPageState extends State<UserPage> {
       child: Container(
         // add border line
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 2),
-          borderRadius: BorderRadius.circular(10),
+          // border: Border.all(color: Colors.black, width: 2),
+          // borderRadius: BorderRadius.circular(10),
           color: Theme.of(context).colorScheme.background,
         ),
         child: Column(
@@ -54,23 +54,73 @@ class _UserPageState extends State<UserPage> {
                     widget.service.reconnect();
                   }
                   return Card(
+                      // add shadow
+                      elevation: 15,
                       child: Column(
-                    children: [
-                      Avatar(
-                        address: widget.wallet.address,
-                        size: 100,
-                      ),
-                      ListTile(
-                        title: const Text('Address'),
-                        subtitle: Text(widget.wallet.address),
-                      ),
-                      ListTile(
-                        title: const Text('Balance'),
-                        subtitle: Text(snapshot.data.toString()),
-                      ),
-                    ],
-                  ));
-                })
+                        children: [
+                          Avatar(
+                            address: widget.wallet.address,
+                            size: 100,
+                          ),
+                          ListTile(
+                            title: const Text('Address'),
+                            subtitle: Text(widget.wallet.address),
+                          ),
+                          ListTile(
+                              title: const Text('Balance'),
+                              subtitle: Text(
+                                snapshot.data.toString() == 'null'
+                                    ? 'not connected'
+                                    : snapshot.data.toString(),
+                              )),
+                        ],
+                      ));
+                }),
+            const Card(
+                color: Color.fromRGBO(255, 255, 128, 0.9),
+                elevation: 15,
+                child: Column(children: [
+                  ListTile(
+                    title: Text('7 No'),
+                  ),
+                  ListTile(
+                    title: Text('1. No Unwanted Contacts'),
+                    subtitle: Text("Block unwanted calls and text messages."),
+                  ),
+                  ListTile(
+                    title: Text('2. No Sharing Info Unprompted'),
+                    subtitle: Text(
+                        "Never give your personal or financial information in response to a request that you dont expect. Even if they claim to have 'secret' information on you."),
+                  ),
+                  ListTile(
+                    title: Text('3. No Pressure Tactics'),
+                    subtitle: Text(
+                        "Dont fall for their high pressure, 'must reply now', demands. Its all a trick."),
+                  ),
+                  ListTile(
+                    title: Text('4. No Talking to Strangers'),
+                    subtitle: Text(
+                        "Dont talk to people you dont know in person. They could be anyone."),
+                  ),
+                  ListTile(
+                    title: Text('5. No Unverified Contacts'),
+                    subtitle: Text(
+                        "Check our database for their email, username, phone number and Crypto address(and file a report!). You wont be the only target."),
+                  ),
+                  ListTile(
+                    title: Text('6. No Over-Sharing Online'),
+                    subtitle: Text(
+                        "Be mindful of the information you share on social networks. Scammers can use this information against you."),
+                  ),
+                  ListTile(
+                    title: Text('7. No Money in Online Dating'),
+                    subtitle: Text(
+                        "If you're online dating, never, ever, send them money."),
+                  )
+                ])),
+            const SizedBox(
+              height: 50,
+            )
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:call_log/call_log.dart';
+import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -518,14 +519,23 @@ class BlockchainService {
     // query CallLog 30 days ago
     int from = now.subtract(const Duration(days: 5)).millisecondsSinceEpoch;
 
-    // query CallLog 30 days ago
-
     Iterable<CallLogEntry> entries = await CallLog.query(
       dateFrom: from,
     );
-    // to list
+    // group by phone number
+    final groupByPhone = groupBy(entries, (CallLogEntry entry) => entry.number);
+    debugPrint(
+        "🚩 ~ file: blockchain.dart:527 ~ BlockchainService ~ $groupByPhone:");
 
-    return entries.toSet().toList();
+    // get only latest timestamp, name, number and put to array
+    List<CallLogEntry> records = [];
+    groupByPhone.forEach((key, value) {
+      final latest = value.reduce((a, b) =>
+          a.timestamp! > b.timestamp! ? a : b); // get latest timestamp
+      records.add(latest);
+    });
+
+    return records;
   }
 }
 

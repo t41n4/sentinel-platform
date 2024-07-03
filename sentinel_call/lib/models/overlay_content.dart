@@ -11,7 +11,6 @@ class MyOverlayContent extends StatefulWidget {
 
 class _MyOverlayContentState extends State<MyOverlayContent> {
   final _normalColors = const Color.fromARGB(255, 150, 202, 244);
-
   final _spamColors = const Color.fromARGB(255, 209, 3, 99);
 
   dynamic _dataFromApp = {
@@ -53,8 +52,41 @@ class _MyOverlayContentState extends State<MyOverlayContent> {
     final calledBefore = _dataFromApp["called_before"];
     final status = _dataFromApp["status"];
 
+    final color = status == "spam" ? Colors.white : Colors.black54;
+    final colorTextStyle = status == "spam"
+        ? const TextStyle(color: Colors.white)
+        : const TextStyle(color: Colors.black);
+
+    final icon = status == "spam"
+        ? const Icon(
+            Icons.error,
+            color: Colors.white,
+            size: 20.0,
+          )
+        : const Icon(
+            Icons.check_circle,
+            color: Colors.green,
+            size: 20.0,
+          );
+    final closeIcon = status == "spam"
+        ? const Icon(
+            Icons.close,
+            color: Colors.white,
+            size: 20.0,
+          )
+        : const Icon(
+            Icons.close,
+            color: Colors.black54,
+            size: 20.0,
+          );
+
+    final divider = status == "spam"
+        ? const Divider(color: Colors.white)
+        : const Divider(color: Colors.black54);
+
     return Material(
       color: Colors.transparent,
+      textStyle: colorTextStyle,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12.0),
         width: double.infinity,
@@ -64,7 +96,7 @@ class _MyOverlayContentState extends State<MyOverlayContent> {
           borderRadius: BorderRadius.circular(12.0),
           // add borderline
           border: Border.all(
-            color: Colors.black54,
+            color: color,
             width: 1.0,
           ),
         ),
@@ -85,30 +117,15 @@ class _MyOverlayContentState extends State<MyOverlayContent> {
                     style: const TextStyle(
                         fontSize: 13.0, fontWeight: FontWeight.bold),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        status.toUpperCase(),
-                        style: const TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(width: 5),
-                      status == "spam"
-                          ? const Icon(
-                              Icons.error,
-                              color: Colors.red,
-                              size: 20.0,
-                            )
-                          : const Icon(
-                              Icons.check_circle,
-                              color: Colors.green,
-                              size: 20.0,
-                            )
-                    ],
+                  const SizedBox(height: 15),
+                  Text(
+                    status.toUpperCase(),
+                    style: const TextStyle(
+                        fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
-                  const Divider(color: Colors.black54),
+                  icon,
                   const Spacer(),
+                  divider,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -123,13 +140,13 @@ class _MyOverlayContentState extends State<MyOverlayContent> {
                       ),
                     ],
                   ),
-                  const Divider(color: Colors.black54),
+                  divider,
                   const Spacer(),
                   Container(
                     // add border line
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: Colors.black54,
+                        color: color,
                         width: 1.0,
                       ),
                       // circle button
@@ -140,10 +157,7 @@ class _MyOverlayContentState extends State<MyOverlayContent> {
                       onPressed: () async {
                         await FlutterOverlayWindow.closeOverlay();
                       },
-                      icon: const Icon(
-                        Icons.close,
-                        color: Colors.black,
-                      ),
+                      icon: closeIcon,
                     ),
                   ),
                 ],

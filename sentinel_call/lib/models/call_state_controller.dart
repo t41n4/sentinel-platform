@@ -7,10 +7,9 @@ import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:get/get.dart';
 import 'package:phone_state/phone_state.dart';
 import 'package:polkadart_keyring/polkadart_keyring.dart';
-import 'package:sentinel_call/generated/localhost/types/sp_core/sr25519/public.dart';
-import 'package:ss58/ss58.dart' as ss58;
 import 'package:sentinel_call/services/blockchain.dart';
 import 'package:sentinel_call/types/human_phone_record.dart';
+import 'package:ss58/ss58.dart' as ss58;
 import 'package:uuid/uuid.dart';
 
 // ViewModel for managing call states and handling PDF uploads
@@ -34,7 +33,12 @@ class CallStateController extends GetxController {
   }
 
   didReported(String spammer, List<dynamic> history) {
-    return history.contains(spammer);
+    for (var element in history) {
+      if (element['who'] == spammer) {
+        return true;
+      }
+    }
+    return false;
   }
 
   Future<String> getCallerData(String incommingNumber) async {
@@ -57,10 +61,15 @@ class CallStateController extends GetxController {
 
     final reportHistory =
         humanRecords.isNotEmpty ? humanRecords.first.spamRecords : [];
+    debugPrint(
+        "🚩 ~ file: call_state_controller.dart:46 ~ CallStateController ~ ss58userAddress: $userAddress");
+
+    debugPrint(
+        "🚩 ~ file: call_state_controller.dart:58 ~ CallStateController ~ reportHistory: $reportHistory");
 
     // Get the status of the first human record if available, otherwise set to null.
     final status = humanRecords.isNotEmpty
-        ? didReported(incommingNumber, reportHistory)
+        ? didReported(userAddress, reportHistory)
             ? "spam"
             : humanRecords.first.status
         : "normal";

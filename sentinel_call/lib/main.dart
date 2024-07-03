@@ -28,7 +28,9 @@ Future main() async {
   await Permission.sms.request();
   await Permission.systemAlertWindow.request();
   await FlutterContacts.requestPermission();
-  
+  debugPrint(
+      "🚩 ~ file: main.dart:40 ~ ${dotenv.env['WEBSOCKET_LOCALCHAIN_URL']}");
+
   final service = BlockchainService(
       dotenv.env['WEBSOCKET_LOCALCHAIN_URL'] ?? 'ws://localhost:9944');
 

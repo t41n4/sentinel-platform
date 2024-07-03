@@ -30,7 +30,7 @@ sentinel_call/.flutter-plugins-dependencies
 sentinel_call/.packages
 sentinel_call/.pub-cache/
 sentinel_call/.pub/
-sentinel_call//build/
+sentinel_call/build/
 
 # Symbolication related
 sentinel_call/app.*.symbols

@@ -42,7 +42,7 @@ class _MainWrapperState extends State<MainWrapper>
       vsync: this,
     );
     _hideBottomBarAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
 

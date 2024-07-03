@@ -2,6 +2,7 @@ import 'package:call_log/call_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 import 'package:polkadart/polkadart.dart';
 import 'package:polkadart_keyring/polkadart_keyring.dart';
 import 'package:sentinel_call/module/alert_dialog.dart';
@@ -164,6 +165,19 @@ class _ListItemState extends State<ListItem> {
       debugPrint(widget.service.isConnected().toString());
       await widget.service.reconnect();
     }
+
+    if (!widget.service.isConnected()) {
+      if (context.mounted) {
+        const ShowAlertDialog(
+          title: 'Error',
+          content: 'Please check your connection and try again',
+        ).build(context);
+        setState(() {
+          isProcess = false;
+        });
+      }
+      return;
+    }
     // ============= check if spammer is exist =============
     final phoneRecord = await widget.service.queryPhoneRecord(spammer);
     final threshHold = widget.service.queryThreshold();
@@ -238,8 +252,6 @@ class _ListItemState extends State<ListItem> {
       return;
     }
 
-    // =============  =============
-
     final extrinsic = await widget.service.buildSpamExtrinsic(
         reason: reason, spammer: spammer, wallet: widget.wallet);
     await widget.service
@@ -266,6 +278,9 @@ class _ListItemState extends State<ListItem> {
 
   @override
   Widget build(BuildContext context) {
+    late String reason = '';
+    final String spammer = widget.number;
+    final _form = GlobalKey<FormState>();
     return SizedBox(
       height: 50,
       child: Slidable(
@@ -279,10 +294,70 @@ class _ListItemState extends State<ListItem> {
                   _status = const ExtrinsicStatus(type: 'signing', value: '');
                   isProcess = true;
                 });
-                const toastMessage = ToastMessage(
-                    content: 'Your transaction is signing', typeToast: 'info');
-                toastMessage.build(context);
-                _reportSpam("Spam", widget.number);
+
+                // const toastMessage = ToastMessage(
+                //     content: 'Your transaction is signing', typeToast: 'info');
+                // toastMessage.build(context);
+                // _reportSpam("Spam", widget.number);
+
+                // show only reason text field dialog
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Form(
+                      key: _form,
+                      child: AlertDialog(
+                        title: const Text('Report spam'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextFormField(
+                              decoration: const InputDecoration(
+                                  labelText: 'Reason',
+                                  hintText: 'Enter the reason'),
+                              validator: Validatorless.multiple(
+                                [
+                                  Validatorless.required('Reason is required'),
+                                  Validatorless.min(
+                                      3, " Reason must be at least 3 ")
+                                ],
+                              ),
+                              onChanged: (value) {
+                                reason = value;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Spammer: $spammer',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            )
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              if (_form.currentState!.validate()) {
+                                const toastMessage = ToastMessage(
+                                    content: 'Your transaction is signing',
+                                    typeToast: 'info');
+                                toastMessage.build(context);
+                                _reportSpam(reason, spammer);
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: const Text('Report'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
               },
               backgroundColor: const Color(0xFFFE4A49),
               foregroundColor: Colors.white,
@@ -352,9 +427,10 @@ class Item extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: Text(name, style: textTheme.bodyText1)),
+            Expanded(child: Text(name, style: textTheme.bodyLarge)),
             Expanded(
-                child: Text("$number - $dateTime", style: textTheme.bodyText2)),
+                child:
+                    Text("$number - $dateTime", style: textTheme.bodyMedium)),
           ],
         ),
       ),
