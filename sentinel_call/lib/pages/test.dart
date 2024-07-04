@@ -58,11 +58,29 @@ class _CallingPageState extends State<CallingPage> {
               child: const Text('Show Overlay')),
           ElevatedButton(
               onPressed: () async {
+
                 final ext = await widget.service.buildMakeCallPayload(
                     '0935834328', '0935834329', widget.wallet);
                 widget.service.submitMakeCallExtrinsic(ext);
+                
               },
               child: const Text('Make Call Event')),
+          ElevatedButton(
+              onPressed: () async {
+                // debugPrint(
+                //     "🚩 ~ file: call_state_controller.dart:25 ~ CallStateController ~ $number:");
+                final contacts =
+                    await FlutterContacts.getContacts(withProperties: true);
+                final myContact = contacts
+                    .where((element) => element.phones.any((phone) =>
+                        phone.number.replaceAll(' ', '') == '0935834329'))
+                    .toList();
+                debugPrint(
+                    "🚩 ~ file: call_state_controller.dart:30 ~ CallStateController ~ contact: $contacts");
+                debugPrint(
+                    "🚩 ~ file: call_state_controller.dart:29 ~ CallStateController ~ contact: $myContact");
+              },
+              child: const Text('Find my contact')),
           ElevatedButton(
               onPressed: () {
                 findContactByPhoneNumber('0987209835');

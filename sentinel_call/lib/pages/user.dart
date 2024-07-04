@@ -81,7 +81,7 @@ class _UserPageState extends State<UserPage> {
                 elevation: 15,
                 child: Column(children: [
                   ListTile(
-                    title: Text('7 No'),
+                    title: Text('7 No Tips'),
                   ),
                   ListTile(
                     title: Text('1. No Unwanted Contacts'),

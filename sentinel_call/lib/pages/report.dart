@@ -280,7 +280,7 @@ class _ListItemState extends State<ListItem> {
   Widget build(BuildContext context) {
     late String reason = '';
     final String spammer = widget.number;
-    final _form = GlobalKey<FormState>();
+    final form = GlobalKey<FormState>();
     return SizedBox(
       height: 50,
       child: Slidable(
@@ -305,7 +305,7 @@ class _ListItemState extends State<ListItem> {
                   context: context,
                   builder: (context) {
                     return Form(
-                      key: _form,
+                      key: form,
                       child: AlertDialog(
                         title: const Text('Report spam'),
                         content: Column(
@@ -319,7 +319,9 @@ class _ListItemState extends State<ListItem> {
                                 [
                                   Validatorless.required('Reason is required'),
                                   Validatorless.min(
-                                      3, " Reason must be at least 3 ")
+                                      3, " Reason must be at least 3 "),
+                                  Validatorless.max(
+                                      50, " Reason must be at most 50 ")
                                 ],
                               ),
                               onChanged: (value) {
@@ -342,7 +344,7 @@ class _ListItemState extends State<ListItem> {
                           ),
                           TextButton(
                             onPressed: () {
-                              if (_form.currentState!.validate()) {
+                              if (form.currentState!.validate()) {
                                 const toastMessage = ToastMessage(
                                     content: 'Your transaction is signing',
                                     typeToast: 'info');

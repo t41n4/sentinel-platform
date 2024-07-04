@@ -1,14 +1,11 @@
+import 'package:convert/convert.dart'; // Added missing import
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:polkadart/scale_codec.dart';
 import 'package:polkadart_keyring/polkadart_keyring.dart';
-import 'package:ss58/ss58.dart' as ss58;
-import 'package:sentinel_call/generated/localhost/types/scbc/pallet/phone_record.dart';
 import 'package:sentinel_call/services/blockchain.dart';
 import 'package:sentinel_call/types/human_phone_record.dart';
 import 'package:sentinel_call/utils/validator.dart';
-
-import 'package:convert/convert.dart'; // Added missing import
+import 'package:ss58/ss58.dart' as ss58;
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -35,6 +32,7 @@ class _SearchPageState extends State<SearchPage> {
               TextFormField(
                 validator: phoneValidator,
                 controller: searchTextController,
+                keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   labelText: "Search Phone Number",
                   fillColor: Colors.white,
@@ -65,9 +63,6 @@ class _SearchPageState extends State<SearchPage> {
                         // log error
                         debugPrint(
                             "🚩 ~ file: search.dart:71 ~ _SearchPageState ~ ${snapshot.error}:");
-                        // log error
-                        debugPrint(
-                            "🚩 ~ file: search.dart:71 ~ _SearchPageState ~ ${snapshot.error}:");
                         return const Center(
                           child: Text('Error while fetching data'),
                         );
@@ -93,9 +88,9 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<List<HumanPhoneRecord>?> fetchPhoneRecord(String number) async {
     final records = await service.queryPhoneRecord(number);
+    debugPrint("🚩 ~ file: search.dart:91 ~ _SearchPageState ~ $records");
     final human =
         records?.map((e) => HumanPhoneRecord.toHuman(e, number)).toList();
-
     return human;
   }
 }
@@ -120,7 +115,6 @@ class EmptyView extends StatelessWidget {
 
 class PhoneRecordItem extends StatelessWidget {
   final HumanPhoneRecord phoneRecord;
-
   const PhoneRecordItem({
     Key? key,
     required this.phoneRecord,
@@ -160,6 +154,43 @@ class PhoneRecordItem extends StatelessWidget {
                 Text(
                   'Detect spam record: ${phoneRecord.spamRecords.length}',
                 ),
+                // padding left 5px
+                Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        for (var record in phoneRecord.spamRecords)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Reason: ${record['reason']}',
+                                // text bold
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'By: ${'0x${record['who'].substring(0, 4)}...${record['who'].substring(record['who'].length - 4)}'}',
+                                    ),
+                                    Text(
+                                      'At: ${record['timestamp']}',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                      ],
+                    )),
               ],
             ),
           ],

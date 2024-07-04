@@ -63,10 +63,14 @@ class HumanPhoneRecord {
                         final input = Input.fromHex(
                             hex.encode(Uint8List.fromList(value)));
                         final decoded = U64Codec.codec.decode(input);
-                        return MapEntry(
-                          key,
-                          decoded.toString(),
-                        );
+                        final datetime =
+                            DateTime.fromMillisecondsSinceEpoch(decoded.toInt())
+                                .toUtc()
+                                .toString()
+                                .substring(0, 16)
+                                .substring(2);
+
+                        return MapEntry(key, datetime);
                       case 'reason':
                         return MapEntry(key,
                             String.fromCharCodes(Uint8List.fromList(value)));
@@ -99,10 +103,13 @@ class HumanPhoneRecord {
                         final input = Input.fromHex(
                             hex.encode(Uint8List.fromList(value)));
                         final decoded = U64Codec.codec.decode(input);
-                        return MapEntry(
-                          key,
-                          decoded.toString(),
-                        );
+                        final datetime =
+                            DateTime.fromMillisecondsSinceEpoch(decoded.toInt())
+                                .toUtc()
+                                .toString()
+                                .substring(0, 16)
+                                .substring(2);
+                        return MapEntry(key, datetime);
                       default:
                         return MapEntry(key, value);
                     }

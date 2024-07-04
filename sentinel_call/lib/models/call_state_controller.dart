@@ -22,14 +22,19 @@ class CallStateController extends GetxController {
   final wallet = Get.find<KeyPair>();
 
   Future<List<Contact>> findMyContact(String number) async {
-    debugPrint(
-        "🚩 ~ file: call_state_controller.dart:25 ~ CallStateController ~ $number:");
+    // debugPrint(
+    //     "🚩 ~ file: call_state_controller.dart:25 ~ CallStateController ~ $number:");
     final contacts = await FlutterContacts.getContacts(withProperties: true);
-    final contact = contacts
+    final myContact = contacts
         .where((element) => element.phones
-            .any((phone) => phone.number.replaceAll(' ', '') == '0935834329'))
+            .any((phone) => phone.number.replaceAll(' ', '') == number))
         .toList();
-    return contact;
+    debugPrint(
+        "🚩 ~ file: call_state_controller.dart:30 ~ CallStateController ~ contact: $contacts");
+    debugPrint(
+        "🚩 ~ file: call_state_controller.dart:29 ~ CallStateController ~ contact: $myContact");
+
+    return myContact;
   }
 
   didReported(String spammer, List<dynamic> history) {
@@ -61,11 +66,11 @@ class CallStateController extends GetxController {
 
     final reportHistory =
         humanRecords.isNotEmpty ? humanRecords.first.spamRecords : [];
-    debugPrint(
-        "🚩 ~ file: call_state_controller.dart:46 ~ CallStateController ~ ss58userAddress: $userAddress");
+    // debugPrint(
+    //     "🚩 ~ file: call_state_controller.dart:46 ~ CallStateController ~ ss58userAddress: $userAddress");
 
-    debugPrint(
-        "🚩 ~ file: call_state_controller.dart:58 ~ CallStateController ~ reportHistory: $reportHistory");
+    // debugPrint(
+    //     "🚩 ~ file: call_state_controller.dart:58 ~ CallStateController ~ reportHistory: $reportHistory");
 
     // Get the status of the first human record if available, otherwise set to null.
     final status = humanRecords.isNotEmpty
@@ -74,21 +79,20 @@ class CallStateController extends GetxController {
             : humanRecords.first.status
         : "normal";
 
+    final myContact = await findMyContact(incommingNumber);
+
     // Print debug information.
-    debugPrint(
-        "🚩 ~ file: call_state_controller.dart:38 ~ CallStateController ~ Records: $records");
-    debugPrint(
-        "🚩 ~ file: call_state_controller.dart:41 ~ CallStateController ~ Data: $userAddress");
-    debugPrint(
-        "🚩 ~ file: call_state_controller.dart:47 ~ CallStateController ~ Human Records: $humanRecords");
-    debugPrint(
-        "🚩 ~ file: call_state_controller.dart:50 ~ CallStateController ~ Count: $count");
+    // debugPrint(
+    //     "🚩 ~ file: call_state_controller.dart:38 ~ CallStateController ~ Records: $records");
+    // debugPrint(
+    //     "🚩 ~ file: call_state_controller.dart:41 ~ CallStateController ~ Data: $userAddress");
+    // debugPrint(
+    //     "🚩 ~ file: call_state_controller.dart:47 ~ CallStateController ~ Human Records: $humanRecords");
+    // debugPrint(
+    //     "🚩 ~ file: call_state_controller.dart:50 ~ CallStateController ~ Count: $count");
 
     // Create a JSON object with relevant data.
-    final jsonData = {
-      'count': count,
-      'status': status,
-    };
+    final jsonData = {'count': count, 'status': status, 'myContact': myContact};
 
     // Return the JSON-encoded string.
     return jsonEncode(jsonData);
@@ -99,52 +103,52 @@ class CallStateController extends GetxController {
     super.onInit();
     PhoneState.stream.listen((event) async {
       String caller = event.number.toString();
+      String callee = wallet.address;
+
       if (caller.isNotEmpty && caller != 'null' && caller != '') {
         switch (event.status) {
           case PhoneStateStatus.CALL_INCOMING:
             final data = await getCallerData(caller);
             final jsonData = jsonDecode(data);
-            String callee = wallet.address;
-            final myContact = await findMyContact(caller);
+
+            final count = jsonData["count"];
+            final status = jsonData['status'];
+            final myContact = jsonData["myContact"] ?? [];
+            final title =
+                myContact.isEmpty ? '???' : myContact.first['displayName'];
+
             debugPrint(
                 "🚩 ~ file: call_state_controller.dart:79 ~ CallStateController ~ $myContact:");
-            if (myContact.isEmpty) {
-              FlutterOverlayWindow.shareData({
-                'title': '???',
-                'number': '${event.number}',
-                'called_before': jsonData["count"],
-                'status': jsonData['status'],
-              });
-              FlutterOverlayWindow.showOverlay(
-                  enableDrag: true,
-                  height: 470,
-                  width: 500,
-                  alignment: OverlayAlignment.center);
+
+            if (myContact.isNotEmpty) {
               final ext =
                   await service.buildMakeCallPayload(caller, callee, wallet);
-              await service.submitMakeCallExtrinsic(ext);
-            } else {
-              debugPrint(
-                  "🚩 ~ file: call_state_controller.dart:104 ~ CallStateController ~ ${myContact.first.displayName}:");
-              FlutterOverlayWindow.shareData({
-                'title': myContact.first.displayName,
-                'number': '${event.number}',
-                'called_before': jsonData["count"],
-                'status': jsonData['status'],
-              });
-              FlutterOverlayWindow.showOverlay(
-                  enableDrag: true,
-                  height: 470,
-                  width: 500,
-                  alignment: OverlayAlignment.center);
-              final ext =
-                  await service.buildMakeCallPayload(caller, callee, wallet);
-              await service.submitMakeCallExtrinsic(ext);
+              service.submitMakeCallExtrinsic(ext);
             }
+
+            // Determine title based on the presence of myContact
+
+            // Share data and show overlay
+            FlutterOverlayWindow.shareData({
+              'title': title,
+              'number': caller,
+              'called_before': count,
+              'status': status,
+            });
+
+            FlutterOverlayWindow.showOverlay(
+              enableDrag: true,
+              height: 470,
+              width: 500,
+              alignment: OverlayAlignment.center,
+            );
+
             break;
+
           default:
             break;
         }
+
         callState.value = event;
         update();
       }
