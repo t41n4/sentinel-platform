@@ -19,10 +19,28 @@ class BlockchainService {
   late Provider _localProvider;
 
   BlockchainService(this._wsEndpoint) {
-    final tempLocalProvider = Provider.fromUri(Uri.parse(_wsEndpoint));
-    tempLocalProvider.isConnected()
-        ? _localProvider = tempLocalProvider
-        : throw Exception('Error connecting to the blockchain');
+    _localProvider = Provider.fromUri(Uri.parse(_wsEndpoint));
+    ensureConnected();
+  }
+
+  // ensure connected
+  void ensureConnected() {
+    if (!isConnectedSucess()) {
+      debugPrint("🚩 ~ BlockchainService ~ re-Connecting");
+      reconnect();
+    } else {
+      debugPrint("🚩 ~ BlockchainService ~ Connected");
+    }
+  }
+
+  bool isConnectedSucess() {
+    final stateApi = StateApi(_localProvider);
+    var res = true;
+    stateApi.getRuntimeVersion().then((value) => true).catchError((e) {
+      debugPrint("🚩 ~ BlockchainService ~ isConnectedSucess ~ $e");
+      res = false;
+    });
+    return res;
   }
 
   Future getAccountInfo(String address) async {
@@ -32,10 +50,6 @@ class BlockchainService {
         ss58.Codec.fromNetwork('substrate').decode(address);
     final account = await localApi.query.system.account(decodedBytes);
     return account.toJson();
-  }
-
-  void Hello() {
-    debugPrint('Hello from BlockchainService');
   }
 
   Future<KeyPair> createWalletFromPhrase(String mnemonic) async {
@@ -58,17 +72,14 @@ class BlockchainService {
     return KeyPair.sr25519.fromMnemonic(phrase);
   }
 
-  bool isConnected() {
-    return _localProvider.isConnected();
-  }
-
   void disconnect() {
+    debugPrint("🚩 ~ BlockchainService ~ disconnecting");
+
     _localProvider.disconnect();
   }
 
   Future<void> reconnect() async {
     debugPrint("🚩 ~ BlockchainService ~ ${_localProvider.isConnected()}:");
-
     _localProvider.disconnect();
     _localProvider = Provider.fromUri(Uri.parse(_wsEndpoint));
   }

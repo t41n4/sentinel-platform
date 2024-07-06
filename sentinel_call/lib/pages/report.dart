@@ -161,12 +161,12 @@ class _ListItemState extends State<ListItem> {
   }
 
   _reportSpam(String reason, String spammer) async {
-    if (!widget.service.isConnected()) {
-      debugPrint(widget.service.isConnected().toString());
+    if (!widget.service.isConnectedSucess()) {
+      debugPrint(widget.service.isConnectedSucess().toString());
       await widget.service.reconnect();
     }
 
-    if (!widget.service.isConnected()) {
+    if (!widget.service.isConnectedSucess()) {
       if (context.mounted) {
         const ShowAlertDialog(
           title: 'Error',

@@ -3,6 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:polkadart_keyring/polkadart_keyring.dart';
 import 'package:sentinel_call/models/call_state_controller.dart';
@@ -12,14 +13,11 @@ import 'package:sentinel_call/theme/custom_colors_theme.dart';
 
 class MainWrapper extends StatefulWidget {
   final String title;
-  final BlockchainService service;
-  final KeyPair wallet;
 
-  const MainWrapper(
-      {super.key,
-      required this.title,
-      required this.service,
-      required this.wallet});
+  const MainWrapper({
+    super.key,
+    required this.title,
+  });
 
   @override
   State<MainWrapper> createState() => _MainWrapperState();
@@ -32,6 +30,9 @@ class _MainWrapperState extends State<MainWrapper>
   late bool granted = false;
   late AnimationController _fabAnimationController;
   late AnimationController _hideBottomBarAnimationController;
+
+  final service = Get.find<BlockchainService>();
+  final wallet = Get.find<KeyPair>();
 
   @override
   void initState() {
@@ -56,7 +57,7 @@ class _MainWrapperState extends State<MainWrapper>
   void dispose() {
     _fabAnimationController.dispose();
     _hideBottomBarAnimationController.dispose();
-    widget.service.disconnect();
+    service.disconnect();
     super.dispose();
   }
 
@@ -110,8 +111,8 @@ class _MainWrapperState extends State<MainWrapper>
                 onNotification: onScrollNotification,
                 child: NavigationScreen(
                   titleList[_bottomNavIndex],
-                  wallet: widget.wallet,
-                  service: widget.service,
+                  wallet: wallet,
+                  service: service,
                 ),
               ),
               bottomNavigationBar: AnimatedBottomNavigationBar.builder(

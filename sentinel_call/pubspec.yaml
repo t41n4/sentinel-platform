@@ -79,6 +79,10 @@ dependencies:
   convert: any
   uuid: any
   quiver: any
+
+  # flutter_background_service: ^5.0.6
+  # flutter_local_notifications: ^17.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

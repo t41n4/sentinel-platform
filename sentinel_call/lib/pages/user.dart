@@ -33,7 +33,14 @@ class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     final balance = _getBalance(widget.wallet.address);
+    // theme
+    final theme = Theme.of(context);
 
+    bool isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
+    final backgroundCard2 = isDarkMode
+        ? theme.colorScheme.background
+        : const Color.fromRGBO(255, 255, 128, 0.9);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -41,7 +48,7 @@ class _UserPageState extends State<UserPage> {
         decoration: BoxDecoration(
           // border: Border.all(color: Colors.black, width: 2),
           // borderRadius: BorderRadius.circular(10),
-          color: Theme.of(context).colorScheme.background,
+          color: theme.colorScheme.background,
         ),
         child: Column(
           children: [
@@ -76,10 +83,10 @@ class _UserPageState extends State<UserPage> {
                         ],
                       ));
                 }),
-            const Card(
-                color: Color.fromRGBO(255, 255, 128, 0.9),
+            Card(
+                color: backgroundCard2,
                 elevation: 15,
-                child: Column(children: [
+                child: const Column(children: [
                   ListTile(
                     title: Text('7 No Tips'),
                   ),

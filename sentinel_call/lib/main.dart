@@ -22,41 +22,57 @@ void overlayMain() {
   ));
 }
 
+Future establishConnection() async {
+  final service = BlockchainService(
+      dotenv.env['WEBSOCKET_LOCALCHAIN_URL'] ?? 'ws://localhost:9944');
+  final wallet = await service.createAliceWallet();
+  Get.lazyPut<BlockchainService>(() => service);
+  Get.lazyPut<KeyPair>(() => wallet);
+}
+
 Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   await dotenv.load(fileName: "assets/env/local.env");
   await Permission.phone.request();
   await Permission.sms.request();
   await Permission.systemAlertWindow.request();
   await FlutterContacts.requestPermission();
-  debugPrint(
-      "🚩 ~ file: main.dart:40 ~ ${dotenv.env['WEBSOCKET_LOCALCHAIN_URL']}");
+  await establishConnection();
 
-  final service = BlockchainService(
-      dotenv.env['WEBSOCKET_LOCALCHAIN_URL'] ?? 'ws://localhost:9944');
-
-  final wallet = await service.createAliceWallet();
-
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp(service: service, wallet: wallet));
+  runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  final BlockchainService service;
-  final KeyPair wallet;
-  const MyApp({super.key, required this.service, required this.wallet});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    Fluttertoast.showToast(msg: 'Sentinel Call is running');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    final service = Get.find<BlockchainService>();
+    service.disconnect();
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     Get.lazyPut<CallStateController>(() => CallStateController());
-    Get.lazyPut<BlockchainService>(() => service);
-    Get.lazyPut<KeyPair>(() => wallet);
     return GetMaterialApp(
       title: 'Sentinel Call',
       theme: AppTheme.get(isLight: true, context: context),
       darkTheme: AppTheme.get(isLight: false, context: context),
-      home:
-          MainWrapper(title: 'Sentinel Call', service: service, wallet: wallet),
+      home: const MainWrapper(title: 'Sentinel Call'),
       builder: FToastBuilder(),
       navigatorKey: navigatorKey,
     );
