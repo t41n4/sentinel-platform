@@ -38,9 +38,12 @@ class _UserPageState extends State<UserPage> {
 
     bool isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
-    final backgroundCard2 = isDarkMode
-        ? theme.colorScheme.background
-        : const Color.fromRGBO(255, 255, 128, 0.9);
+    // final backgroundCard2 = isDarkMode
+    //     ? theme.colorScheme.background
+    //     : const Color.fromRGBO(255, 255, 128, 0.9);
+
+    final backgroundCard2 = theme.colorScheme.background;
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(

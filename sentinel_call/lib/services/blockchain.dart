@@ -114,7 +114,8 @@ class BlockchainService {
   Future<Uint8List> buildSpamExtrinsic(
       {required String reason,
       required String spammer,
-      required KeyPair wallet}) async {
+      required KeyPair wallet,
+      required bool isSpam}) async {
     final localApi = Localhost(_localProvider);
     final stateApi = StateApi(_localProvider);
 
@@ -136,7 +137,8 @@ class BlockchainService {
         .reportSpam(
             reason: hex.decode(hex.encode(toIntList(reason))),
             spammer: hex.decode(hex.encode(toIntList(spammer))),
-            spammee: ss58.Codec.fromNetwork('substrate').decode(wallet.address))
+            spammee: ss58.Codec.fromNetwork('substrate').decode(wallet.address),
+            isSpam: isSpam)
         .encode();
 
     final nonce1 =
@@ -337,7 +339,6 @@ class BlockchainService {
   Future<StreamSubscription<ExtrinsicStatus>> submitProposalMotionExtrinsic(
       Uint8List extrinsic, void Function(ExtrinsicStatus) statusHandler) {
     final authorApi = AuthorApi(_localProvider);
-
     final hashTx = authorApi.submitAndWatchExtrinsic(extrinsic, statusHandler);
     return hashTx;
   }
@@ -513,9 +514,14 @@ class BlockchainService {
     return data;
   }
 
-  int queryThreshold() {
+  int querySpamThreshold() {
     final localApi = Localhost(_localProvider);
     return localApi.constant.scbc.thresholdSpam;
+  }
+
+  int queryNormalThreshold() {
+    final localApi = Localhost(_localProvider);
+    return localApi.constant.scbc.thresholdNormal;
   }
 
   Future<int> getNumberBlock() async {

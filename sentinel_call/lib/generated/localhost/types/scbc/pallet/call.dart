@@ -26,7 +26,7 @@ abstract class Call {
     return codec.sizeHint(this);
   }
 
-  Map<String, Map<String, List<int>>> toJson();
+  Map<String, Map<String, dynamic>> toJson();
 }
 
 class $Call {
@@ -40,11 +40,13 @@ class $Call {
     required List<int> spammee,
     required List<int> spammer,
     required List<int> reason,
+    required bool isSpam,
   }) {
     return ReportSpam(
       spammee: spammee,
       spammer: spammer,
       reason: reason,
+      isSpam: isSpam,
     );
   }
 
@@ -187,6 +189,7 @@ class ReportSpam extends Call {
     required this.spammee,
     required this.spammer,
     required this.reason,
+    required this.isSpam,
   });
 
   factory ReportSpam._decode(_i1.Input input) {
@@ -194,6 +197,7 @@ class ReportSpam extends Call {
       spammee: _i1.U8SequenceCodec.codec.decode(input),
       spammer: _i1.U8SequenceCodec.codec.decode(input),
       reason: _i1.U8SequenceCodec.codec.decode(input),
+      isSpam: _i1.BoolCodec.codec.decode(input),
     );
   }
 
@@ -206,12 +210,16 @@ class ReportSpam extends Call {
   /// Reason
   final List<int> reason;
 
+  /// bool
+  final bool isSpam;
+
   @override
-  Map<String, Map<String, List<int>>> toJson() => {
+  Map<String, Map<String, dynamic>> toJson() => {
         'report_spam': {
           'spammee': spammee,
           'spammer': spammer,
           'reason': reason,
+          'isSpam': isSpam,
         }
       };
 
@@ -220,6 +228,7 @@ class ReportSpam extends Call {
     size = size + _i1.U8SequenceCodec.codec.sizeHint(spammee);
     size = size + _i1.U8SequenceCodec.codec.sizeHint(spammer);
     size = size + _i1.U8SequenceCodec.codec.sizeHint(reason);
+    size = size + _i1.BoolCodec.codec.sizeHint(isSpam);
     return size;
   }
 
@@ -238,6 +247,10 @@ class ReportSpam extends Call {
     );
     _i1.U8SequenceCodec.codec.encodeTo(
       reason,
+      output,
+    );
+    _i1.BoolCodec.codec.encodeTo(
+      isSpam,
       output,
     );
   }
@@ -260,13 +273,15 @@ class ReportSpam extends Call {
           _i3.listsEqual(
             other.reason,
             reason,
-          );
+          ) &&
+          other.isSpam == isSpam;
 
   @override
   int get hashCode => Object.hash(
         spammee,
         spammer,
         reason,
+        isSpam,
       );
 }
 

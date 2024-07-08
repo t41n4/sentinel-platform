@@ -70,6 +70,8 @@ class _VotePageState extends State<VotePage> {
               final spammerData = fetchPhoneRecord(spammer);
 
               return Column(
+                // align to start
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   FutureBuilder(
                     future: spammerData,
@@ -84,48 +86,53 @@ class _VotePageState extends State<VotePage> {
                       final humanData = snapshotSpammer.data;
                       final spamData = humanData?.first.spamRecords;
 
-                      return ListTile(
-                        leading: CircleAvatar(child: Text(displayIndex)),
-                        title: Text('Target: $spammer'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Voted: $voted'),
-                            CountDownText(
-                              due: deadline,
-                              finishedText: "Done",
-                              showLabel: true,
-                              longDateName: true,
-                              style: const TextStyle(color: Colors.blue),
-                            ),
-                            if (spamData != null)
-                              for (var record in spamData)
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Reason: ${record['reason']}',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                              'By: 0x${record['who'].substring(0, 4)}...${record['who'].substring(record['who'].length - 4)}'),
-                                          Text('At: ${record['timestamp']}'),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                      return Column(
+                        children: [
+                          ListTile(
+                            titleAlignment: ListTileTitleAlignment.top,
+                            leading: CircleAvatar(child: Text(displayIndex)),
+                            title: Text('Target: $spammer'),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Voted: $voted'),
+                                CountDownText(
+                                  due: deadline,
+                                  finishedText: "Done",
+                                  showLabel: true,
+                                  longDateName: true,
+                                  style: const TextStyle(color: Colors.blue),
                                 ),
-                          ],
-                        ),
-                        trailing:
-                            VoteButton(isVoted: isVoted, proposal: proposal),
+                              ],
+                            ),
+                            trailing: VoteButton(
+                                isVoted: isVoted, proposal: proposal),
+                          ),
+                          if (spamData != null)
+                            ExpansionTile(
+                              title: const Text('Report History'),
+                              children: [
+                                for (var record in spamData)
+                                  Column(
+                                    // full width
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    
+                                    children: [
+                                      Text(
+                                        'Reason: ${record['reason']}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                          'By: 0x${record['who'].substring(0, 4)}...${record['who'].substring(record['who'].length - 4)}'),
+                                      Text('At: ${record['timestamp']}'),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                        ],
                       );
                     },
                   ),
@@ -167,7 +174,7 @@ class _VoteButtonState extends State<VoteButton> {
                 isProcessing = true;
               });
               final ext = await service.buildVoteExtrinsicPayload(
-                index: proposal.index ?? 0,
+                index: index ?? 0,
                 proposal: proposal.proposal ?? [],
                 approve: false,
                 wallet: wallet,

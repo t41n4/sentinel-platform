@@ -69,8 +69,8 @@ class Txs {
 
   /// See [`Pallet::set`].
   _i5.RuntimeCall set({required BigInt now}) {
-    final call = _i6.Call.values.set(now: now);
-    return _i5.RuntimeCall.values.timestamp(call);
+    final _call = _i6.Call.values.set(now: now);
+    return _i5.RuntimeCall.values.timestamp(_call);
   }
 }
 

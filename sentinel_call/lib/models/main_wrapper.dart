@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:polkadart_keyring/polkadart_keyring.dart';
 import 'package:sentinel_call/models/call_state_controller.dart';
 import 'package:sentinel_call/models/navigation_screen.dart';
@@ -198,16 +197,16 @@ class _MainWrapperState extends State<MainWrapper>
                   //     () => _bottomNavIndex = titleList.indexOf('Status'),
                   //   ),
                   // ),
-                  SpeedDialChild(
-                    child: const Icon(Icons.call),
-                    backgroundColor: Colors.lightGreen,
-                    foregroundColor: Colors.white,
-                    label: 'Test Phone',
-                    // onTap: () => Get.toNamed('/test'),
-                    onTap: () => setState(
-                      () => _bottomNavIndex = titleList.indexOf('Test'),
-                    ),
-                  ),
+                  // SpeedDialChild(
+                  //   child: const Icon(Icons.call),
+                  //   backgroundColor: Colors.lightGreen,
+                  //   foregroundColor: Colors.white,
+                  //   label: 'Test Phone',
+                  //   // onTap: () => Get.toNamed('/test'),
+                  //   onTap: () => setState(
+                  //     () => _bottomNavIndex = titleList.indexOf('Test'),
+                  //   ),
+                  // ),
                 ],
               ),
             ));

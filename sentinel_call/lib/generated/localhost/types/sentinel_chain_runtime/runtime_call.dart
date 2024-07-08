@@ -426,7 +426,7 @@ class Scbc extends RuntimeCall {
   final _i9.Call value0;
 
   @override
-  Map<String, Map<String, Map<String, List<int>>>> toJson() =>
+  Map<String, Map<String, Map<String, dynamic>>> toJson() =>
       {'SCBC': value0.toJson()};
 
   int _sizeHint() {

@@ -417,7 +417,7 @@ class Scbc extends RuntimeEvent {
   final _i9.Event value0;
 
   @override
-  Map<String, Map<String, Map<String, List<int>>>> toJson() =>
+  Map<String, Map<String, Map<String, dynamic>>> toJson() =>
       {'SCBC': value0.toJson()};
 
   int _sizeHint() {

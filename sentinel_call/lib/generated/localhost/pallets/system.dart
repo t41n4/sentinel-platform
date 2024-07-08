@@ -309,7 +309,7 @@ class Queries {
     if (bytes != null) {
       return _digest.decodeValue(bytes);
     }
-    return const _i7.Digest(logs: []); /* Default */
+    return _i7.Digest(logs: []); /* Default */
   }
 
   /// Events deposited for the current block.
@@ -549,39 +549,39 @@ class Txs {
 
   /// See [`Pallet::remark`].
   _i16.RuntimeCall remark({required List<int> remark}) {
-    final call = _i17.Call.values.remark(remark: remark);
-    return _i16.RuntimeCall.values.system(call);
+    final _call = _i17.Call.values.remark(remark: remark);
+    return _i16.RuntimeCall.values.system(_call);
   }
 
   /// See [`Pallet::set_heap_pages`].
   _i16.RuntimeCall setHeapPages({required BigInt pages}) {
-    final call = _i17.Call.values.setHeapPages(pages: pages);
-    return _i16.RuntimeCall.values.system(call);
+    final _call = _i17.Call.values.setHeapPages(pages: pages);
+    return _i16.RuntimeCall.values.system(_call);
   }
 
   /// See [`Pallet::set_code`].
   _i16.RuntimeCall setCode({required List<int> code}) {
-    final call = _i17.Call.values.setCode(code: code);
-    return _i16.RuntimeCall.values.system(call);
+    final _call = _i17.Call.values.setCode(code: code);
+    return _i16.RuntimeCall.values.system(_call);
   }
 
   /// See [`Pallet::set_code_without_checks`].
   _i16.RuntimeCall setCodeWithoutChecks({required List<int> code}) {
-    final call = _i17.Call.values.setCodeWithoutChecks(code: code);
-    return _i16.RuntimeCall.values.system(call);
+    final _call = _i17.Call.values.setCodeWithoutChecks(code: code);
+    return _i16.RuntimeCall.values.system(_call);
   }
 
   /// See [`Pallet::set_storage`].
   _i16.RuntimeCall setStorage(
       {required List<_i9.Tuple2<List<int>, List<int>>> items}) {
-    final call = _i17.Call.values.setStorage(items: items);
-    return _i16.RuntimeCall.values.system(call);
+    final _call = _i17.Call.values.setStorage(items: items);
+    return _i16.RuntimeCall.values.system(_call);
   }
 
   /// See [`Pallet::kill_storage`].
   _i16.RuntimeCall killStorage({required List<List<int>> keys}) {
-    final call = _i17.Call.values.killStorage(keys: keys);
-    return _i16.RuntimeCall.values.system(call);
+    final _call = _i17.Call.values.killStorage(keys: keys);
+    return _i16.RuntimeCall.values.system(_call);
   }
 
   /// See [`Pallet::kill_prefix`].
@@ -589,17 +589,17 @@ class Txs {
     required List<int> prefix,
     required int subkeys,
   }) {
-    final call = _i17.Call.values.killPrefix(
+    final _call = _i17.Call.values.killPrefix(
       prefix: prefix,
       subkeys: subkeys,
     );
-    return _i16.RuntimeCall.values.system(call);
+    return _i16.RuntimeCall.values.system(_call);
   }
 
   /// See [`Pallet::remark_with_event`].
   _i16.RuntimeCall remarkWithEvent({required List<int> remark}) {
-    final call = _i17.Call.values.remarkWithEvent(remark: remark);
-    return _i16.RuntimeCall.values.system(call);
+    final _call = _i17.Call.values.remarkWithEvent(remark: remark);
+    return _i16.RuntimeCall.values.system(_call);
   }
 }
 

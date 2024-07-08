@@ -37,10 +37,13 @@ class CallStateController extends GetxController {
     return myContact;
   }
 
-  didReported(String spammer, List<dynamic> history) {
-    for (var element in history) {
-      if (element['who'] == spammer) {
+  didReported(String spammee, List<dynamic> history) {
+    for (var element in history.reversed) {
+      if (element['who'] == spammee && element['isSpam'].toString() == 'true') {
         return true;
+      } else if (element['who'] == spammee &&
+          element['isSpam'].toString() == 'false') {
+        return false;
       }
     }
     return false;

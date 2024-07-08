@@ -51,19 +51,19 @@ class Queries {
 class Extrinsics {
   Extrinsics();
 
-  final _i2.Txs system = const _i2.Txs();
+  final _i2.Txs system = _i2.Txs();
 
-  final _i3.Txs timestamp = const _i3.Txs();
+  final _i3.Txs timestamp = _i3.Txs();
 
-  final _i5.Txs grandpa = const _i5.Txs();
+  final _i5.Txs grandpa = _i5.Txs();
 
-  final _i6.Txs balances = const _i6.Txs();
+  final _i6.Txs balances = _i6.Txs();
 
-  final _i9.Txs sudo = const _i9.Txs();
+  final _i9.Txs sudo = _i9.Txs();
 
-  final _i10.Txs council = const _i10.Txs();
+  final _i10.Txs council = _i10.Txs();
 
-  final _i11.Txs scbc = const _i11.Txs();
+  final _i11.Txs scbc = _i11.Txs();
 }
 
 class Constants {

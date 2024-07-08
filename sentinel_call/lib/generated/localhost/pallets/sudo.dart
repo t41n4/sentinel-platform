@@ -47,8 +47,8 @@ class Txs {
 
   /// See [`Pallet::sudo`].
   _i5.RuntimeCall sudo({required _i5.RuntimeCall call}) {
-    final call0 = _i6.Call.values.sudo(call: call);
-    return _i5.RuntimeCall.values.sudo(call0);
+    final _call = _i6.Call.values.sudo(call: call);
+    return _i5.RuntimeCall.values.sudo(_call);
   }
 
   /// See [`Pallet::sudo_unchecked_weight`].
@@ -56,17 +56,17 @@ class Txs {
     required _i5.RuntimeCall call,
     required _i7.Weight weight,
   }) {
-    final call0 = _i6.Call.values.sudoUncheckedWeight(
+    final _call = _i6.Call.values.sudoUncheckedWeight(
       call: call,
       weight: weight,
     );
-    return _i5.RuntimeCall.values.sudo(call0);
+    return _i5.RuntimeCall.values.sudo(_call);
   }
 
   /// See [`Pallet::set_key`].
   _i5.RuntimeCall setKey({required _i8.MultiAddress new_}) {
-    final call = _i6.Call.values.setKey(new_: new_);
-    return _i5.RuntimeCall.values.sudo(call);
+    final _call = _i6.Call.values.setKey(new_: new_);
+    return _i5.RuntimeCall.values.sudo(_call);
   }
 
   /// See [`Pallet::sudo_as`].
@@ -74,10 +74,10 @@ class Txs {
     required _i8.MultiAddress who,
     required _i5.RuntimeCall call,
   }) {
-    final call0 = _i6.Call.values.sudoAs(
+    final _call = _i6.Call.values.sudoAs(
       who: who,
       call: call,
     );
-    return _i5.RuntimeCall.values.sudo(call0);
+    return _i5.RuntimeCall.values.sudo(_call);
   }
 }

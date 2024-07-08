@@ -55,8 +55,8 @@ class Txs {
 
   /// See `Pallet::register_phone_number`.
   _i6.RuntimeCall registerPhoneNumber({required List<int> phoneNumber}) {
-    final call = _i7.Call.values.registerPhoneNumber(phoneNumber: phoneNumber);
-    return _i6.RuntimeCall.values.scbc(call);
+    final _call = _i7.Call.values.registerPhoneNumber(phoneNumber: phoneNumber);
+    return _i6.RuntimeCall.values.scbc(_call);
   }
 
   /// See `Pallet::report_spam`.
@@ -64,13 +64,15 @@ class Txs {
     required List<int> spammee,
     required List<int> spammer,
     required List<int> reason,
+    required bool isSpam,
   }) {
-    final call = _i7.Call.values.reportSpam(
+    final _call = _i7.Call.values.reportSpam(
       spammee: spammee,
       spammer: spammer,
       reason: reason,
+      isSpam: isSpam,
     );
-    return _i6.RuntimeCall.values.scbc(call);
+    return _i6.RuntimeCall.values.scbc(_call);
   }
 
   /// See `Pallet::update_spam_status`.
@@ -78,11 +80,11 @@ class Txs {
     required List<int> spammer,
     required List<int> metadata,
   }) {
-    final call = _i7.Call.values.updateSpamStatus(
+    final _call = _i7.Call.values.updateSpamStatus(
       spammer: spammer,
       metadata: metadata,
     );
-    return _i6.RuntimeCall.values.scbc(call);
+    return _i6.RuntimeCall.values.scbc(_call);
   }
 
   /// See `Pallet::make_call`.
@@ -90,11 +92,11 @@ class Txs {
     required List<int> caller,
     required List<int> callee,
   }) {
-    final call = _i7.Call.values.makeCall(
+    final _call = _i7.Call.values.makeCall(
       caller: caller,
       callee: callee,
     );
-    return _i6.RuntimeCall.values.scbc(call);
+    return _i6.RuntimeCall.values.scbc(_call);
   }
 }
 
@@ -104,5 +106,7 @@ class Constants {
   /// The overarching event type.
   final int maximumOwned = 100;
 
-  final int thresholdSpam = -50;
+  final int thresholdSpam = -30;
+
+  final int thresholdNormal = 0;
 }

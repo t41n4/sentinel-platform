@@ -70,8 +70,8 @@ class _MyAppState extends State<MyApp> {
     Get.lazyPut<CallStateController>(() => CallStateController());
     return GetMaterialApp(
       title: 'Sentinel Call',
-      theme: AppTheme.get(isLight: true, context: context),
-      darkTheme: AppTheme.get(isLight: false, context: context),
+      theme: AppTheme.get(isLight: false, context: context),
+      // darkTheme: AppTheme.get(isLight: false, context: context),
       home: const MainWrapper(title: 'Sentinel Call'),
       builder: FToastBuilder(),
       navigatorKey: navigatorKey,

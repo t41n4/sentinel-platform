@@ -202,12 +202,12 @@ class Txs {
     _i6.AccountId32? prime,
     required int oldCount,
   }) {
-    final call = _i9.Call.values.setMembers(
+    final _call = _i9.Call.values.setMembers(
       newMembers: newMembers,
       prime: prime,
       oldCount: oldCount,
     );
-    return _i4.RuntimeCall.values.council(call);
+    return _i4.RuntimeCall.values.council(_call);
   }
 
   /// See [`Pallet::execute`].
@@ -215,11 +215,11 @@ class Txs {
     required _i4.RuntimeCall proposal,
     required BigInt lengthBound,
   }) {
-    final call = _i9.Call.values.execute(
+    final _call = _i9.Call.values.execute(
       proposal: proposal,
       lengthBound: lengthBound,
     );
-    return _i4.RuntimeCall.values.council(call);
+    return _i4.RuntimeCall.values.council(_call);
   }
 
   /// See [`Pallet::propose`].
@@ -228,12 +228,12 @@ class Txs {
     required _i4.RuntimeCall proposal,
     required BigInt lengthBound,
   }) {
-    final call = _i9.Call.values.propose(
+    final _call = _i9.Call.values.propose(
       threshold: threshold,
       proposal: proposal,
       lengthBound: lengthBound,
     );
-    return _i4.RuntimeCall.values.council(call);
+    return _i4.RuntimeCall.values.council(_call);
   }
 
   /// See [`Pallet::vote`].
@@ -242,19 +242,19 @@ class Txs {
     required BigInt index,
     required bool approve,
   }) {
-    final call = _i9.Call.values.vote(
+    final _call = _i9.Call.values.vote(
       proposal: proposal,
       index: index,
       approve: approve,
     );
-    return _i4.RuntimeCall.values.council(call);
+    return _i4.RuntimeCall.values.council(_call);
   }
 
   /// See [`Pallet::disapprove_proposal`].
   _i4.RuntimeCall disapproveProposal({required _i2.H256 proposalHash}) {
-    final call =
+    final _call =
         _i9.Call.values.disapproveProposal(proposalHash: proposalHash);
-    return _i4.RuntimeCall.values.council(call);
+    return _i4.RuntimeCall.values.council(_call);
   }
 
   /// See [`Pallet::close`].
@@ -264,13 +264,13 @@ class Txs {
     required _i10.Weight proposalWeightBound,
     required BigInt lengthBound,
   }) {
-    final call = _i9.Call.values.close(
+    final _call = _i9.Call.values.close(
       proposalHash: proposalHash,
       index: index,
       proposalWeightBound: proposalWeightBound,
       lengthBound: lengthBound,
     );
-    return _i4.RuntimeCall.values.council(call);
+    return _i4.RuntimeCall.values.council(_call);
   }
 }
 

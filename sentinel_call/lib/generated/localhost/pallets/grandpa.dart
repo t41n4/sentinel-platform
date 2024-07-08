@@ -72,7 +72,7 @@ class Queries {
     if (bytes != null) {
       return _state.decodeValue(bytes);
     }
-    return const _i2.Live(); /* Default */
+    return _i2.Live(); /* Default */
   }
 
   /// Pending change: (signaled at, scheduled change).
@@ -205,11 +205,11 @@ class Txs {
     required _i9.EquivocationProof equivocationProof,
     required _i10.Void keyOwnerProof,
   }) {
-    final call = _i11.Call.values.reportEquivocation(
+    final _call = _i11.Call.values.reportEquivocation(
       equivocationProof: equivocationProof,
       keyOwnerProof: keyOwnerProof,
     );
-    return _i8.RuntimeCall.values.grandpa(call);
+    return _i8.RuntimeCall.values.grandpa(_call);
   }
 
   /// See [`Pallet::report_equivocation_unsigned`].
@@ -217,11 +217,11 @@ class Txs {
     required _i9.EquivocationProof equivocationProof,
     required _i10.Void keyOwnerProof,
   }) {
-    final call = _i11.Call.values.reportEquivocationUnsigned(
+    final _call = _i11.Call.values.reportEquivocationUnsigned(
       equivocationProof: equivocationProof,
       keyOwnerProof: keyOwnerProof,
     );
-    return _i8.RuntimeCall.values.grandpa(call);
+    return _i8.RuntimeCall.values.grandpa(_call);
   }
 
   /// See [`Pallet::note_stalled`].
@@ -229,11 +229,11 @@ class Txs {
     required int delay,
     required int bestFinalizedBlockNumber,
   }) {
-    final call = _i11.Call.values.noteStalled(
+    final _call = _i11.Call.values.noteStalled(
       delay: delay,
       bestFinalizedBlockNumber: bestFinalizedBlockNumber,
     );
-    return _i8.RuntimeCall.values.grandpa(call);
+    return _i8.RuntimeCall.values.grandpa(_call);
   }
 }
 

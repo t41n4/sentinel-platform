@@ -5,32 +5,12 @@ import 'package:polkadart/scale_codec.dart' as _i1;
 
 /// The `Error` enum of this pallet.
 enum Error {
-  /// The phone number is already registered
   phoneNumberAlreadyRegistered('PhoneNumberAlreadyRegistered', 0),
-
-  /// The domain is already registered
-  domainAlreadyRegistered('DomainAlreadyRegistered', 1),
-
-  /// The phone number is not registered
-  phoneNumberNotRegistered('PhoneNumberNotRegistered', 2),
-
-  /// The domain is not registered
-  domainNotRegistered('DomainNotRegistered', 3),
-
-  /// The phone number is not spam
-  phoneNumberNotSpam('PhoneNumberNotSpam', 4),
-
-  /// The domain is not spam
-  domainNotSpam('DomainNotSpam', 5),
-
-  /// The phone number is spam
-  phoneNumberAlreadySpam('PhoneNumberAlreadySpam', 6),
-
-  /// The domain is spam
-  domainSpam('DomainSpam', 7),
-
-  /// The phone number is not reach threshold
-  phoneNumberNotReachThreshold('PhoneNumberNotReachThreshold', 8);
+  phoneNumberNotRegistered('PhoneNumberNotRegistered', 1),
+  phoneNumberNotSpam('PhoneNumberNotSpam', 2),
+  phoneNumberAlreadySpam('PhoneNumberAlreadySpam', 3),
+  phoneNumberNotReachThreshold('PhoneNumberNotReachThreshold', 4),
+  phoneNumberAlreadyNormal('PhoneNumberAlreadyNormal', 5);
 
   const Error(
     this.variantName,
@@ -63,21 +43,15 @@ class $ErrorCodec with _i1.Codec<Error> {
       case 0:
         return Error.phoneNumberAlreadyRegistered;
       case 1:
-        return Error.domainAlreadyRegistered;
-      case 2:
         return Error.phoneNumberNotRegistered;
-      case 3:
-        return Error.domainNotRegistered;
-      case 4:
+      case 2:
         return Error.phoneNumberNotSpam;
-      case 5:
-        return Error.domainNotSpam;
-      case 6:
+      case 3:
         return Error.phoneNumberAlreadySpam;
-      case 7:
-        return Error.domainSpam;
-      case 8:
+      case 4:
         return Error.phoneNumberNotReachThreshold;
+      case 5:
+        return Error.phoneNumberAlreadyNormal;
       default:
         throw Exception('Error: Invalid variant index: "$index"');
     }

@@ -80,8 +80,8 @@ class _NavigationScreenState extends State<NavigationScreen>
             'Report' =>
               ReportPage(service: widget.service, wallet: widget.wallet),
             'Vote' => VotePage(),
-            'Test' =>
-              CallingPage(wallet: widget.wallet, service: widget.service),
+            // 'Test' =>
+            //   CallingPage(wallet: widget.wallet, service: widget.service),
             String() => Container(),
           }
         ],
